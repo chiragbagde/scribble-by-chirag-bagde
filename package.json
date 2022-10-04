@@ -21,6 +21,7 @@
     "@babel/preset-react": "^7.18.6",
     "@bigbinary/neeto-icons": "^1.8.39",
     "@bigbinary/neetoui": "^4.0.9",
+    "@emotion/is-prop-valid": "^1.2.0",
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",

@@ -5,7 +5,7 @@ export const CONTACTS_LIST = [
     createdAt: "Jan 1st, 2022",
     category: "Misc",
     status: "draft",
-    id: 1,
+    id: 10,
   },
   {
     title: "Welcome to Scribble as a project",
@@ -13,7 +13,7 @@ export const CONTACTS_LIST = [
     createdAt: "February 1st, 2022",
     category: "Misc",
     status: "Published",
-    id: 1,
+    id: 20,
   },
   {
     title: "Welcome to Scribble",
@@ -21,7 +21,7 @@ export const CONTACTS_LIST = [
     createdAt: "April 4th, 2022",
     category: "MisGetting Started",
     status: "draft",
-    id: 1,
+    id: 30,
   },
   {
     title: "Welcome to Scribble",
@@ -29,6 +29,6 @@ export const CONTACTS_LIST = [
     createdAt: "March 3rd,2022",
     category: "Security & Privacy ",
     status: "Published",
-    id: 1,
+    id: 40,
   },
 ];
