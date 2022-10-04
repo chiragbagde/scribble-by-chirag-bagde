@@ -2,6 +2,8 @@ import React from "react";
 
 import { Edit, Delete } from "@bigbinary/neeto-icons";
 
+import { formatDateAndTime } from "../utils";
+
 export const contactsTableColumnData = () => [
   {
     title: "TITLE",
@@ -12,9 +14,14 @@ export const contactsTableColumnData = () => [
   },
   {
     title: "DATE",
-    dataIndex: "createdAt",
-    key: "createdAt",
+    dataIndex: "created_at",
+    key: "created_at",
     width: "20%",
+    render: created_at => (
+      <div className="flex  flex-row  gap-2">
+        {formatDateAndTime(created_at)}
+      </div>
+    ),
   },
   {
     title: "AUTHOR",
