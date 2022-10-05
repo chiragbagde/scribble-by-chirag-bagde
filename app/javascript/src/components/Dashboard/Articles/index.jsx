@@ -9,7 +9,7 @@ import Header from "./Header";
 import SideBar from "./SideBar";
 import Table from "./Table";
 
-const Articles = () => {
+const Articles = ({ history }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,7 +42,7 @@ const Articles = () => {
     <div className="flex">
       <SideBar />
       <Container>
-        <Header />
+        <Header history={history} />
         <Table data={articles} />
       </Container>
     </div>

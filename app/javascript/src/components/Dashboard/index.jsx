@@ -4,10 +4,10 @@ import Articles from "./Articles";
 
 import Navbar from "../Common/Navbar";
 
-const Dashboard = () => (
+const Dashboard = ({ history }) => (
   <>
     <Navbar />
-    <Articles />
+    <Articles history={history} />
   </>
 );
 

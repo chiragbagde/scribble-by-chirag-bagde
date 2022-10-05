@@ -1,3 +1,35 @@
+import { buildSelectOptions } from "utils";
+import * as yup from "yup";
+
+export const ARTICLES_FORM_INITIAL_FORM_VALUES = {
+  title: "",
+  description: "",
+  categories: [],
+};
+
+export const CATEGORIES = buildSelectOptions([
+  "Misc",
+  "Getting Started",
+  "Security & Privacy",
+]);
+
+export const ARTICLES_FORM_VALIDATION_SCHEMA = yup.object().shape({
+  title: yup.string().required("Title is required"),
+  description: yup.string().required("Description is required"),
+  categories: yup
+    .array()
+    .of(
+      yup.object().shape({
+        label: yup.string().oneOf(CATEGORIES.map(category => category.label)),
+        value: yup.string().oneOf(CATEGORIES.map(category => category.value)),
+      })
+    )
+    .min(1, "Please select atleast one category")
+    .required("Please select atleast one category"),
+});
+
+export const STATUS = ["Draft", "Published"];
+
 export const CONTACTS_LIST = [
   {
     title: "Welcome to Scribble",

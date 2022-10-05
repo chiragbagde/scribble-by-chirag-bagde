@@ -31,9 +31,10 @@ export const contactsTableColumnData = () => [
   },
   {
     title: "CATEGORY",
-    dataIndex: "category",
+    dataIndex: "categories",
     key: "category",
     width: "20%",
+    render: categories => categories.join(","),
   },
   {
     title: "Status",
