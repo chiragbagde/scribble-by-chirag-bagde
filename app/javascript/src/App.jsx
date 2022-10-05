@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
 
-import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  BrowserRouter as Router,
+  useHistory,
+} from "react-router-dom";
 
 import { setAuthHeaders } from "apis/axios";
 import { initializeLogger } from "common/logger";
 
+import Dashboard from "./components/Dashboard";
+import Create from "./components/Dashboard/Articles/Article/Create";
+
 const App = () => {
   const [loading, setLoading] = useState(true);
+  const history = useHistory();
 
   useEffect(() => {
     initializeLogger();
@@ -19,9 +28,9 @@ const App = () => {
 
   return (
     <Router>
-      <Switch>
-        <Route exact path="/" render={() => <div>Home</div>} />
-        <Route exact path="/about" render={() => <div>About</div>} />
+      <Switch history={history}>
+        <Route exact component={Create} path="/articles/create" />
+        <Route exact component={Dashboard} path="/" />
       </Switch>
     </Router>
   );
