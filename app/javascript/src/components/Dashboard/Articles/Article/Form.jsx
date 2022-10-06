@@ -14,17 +14,33 @@ import {
 
 const { Menu, MenuItem } = ActionDropdown;
 
-const Form = ({ article, history }) => {
+const Form = ({ history, isEdit, article }) => {
   const [submitted, setSubmitted] = useState(false);
+
+  const refetch = async () => await articlesApi.list();
+
+  function handleStatus(values, item) {
+    values.status = item;
+    handleSubmit(values);
+    setSubmitted(true);
+  }
 
   const handleSubmit = async values => {
     const arr = values.categories.map(({ label }) => label);
     try {
-      setSubmitted(true);
-      await articlesApi.create({
-        ...values,
-        categories: arr,
-      });
+      if (isEdit) {
+        await articlesApi.update(
+          { ...values, author: "Oliver Smith", categories: arr },
+          values.slug
+        );
+      } else {
+        await articlesApi.create({
+          ...values,
+          categories: arr,
+          author: "Oliver Smith",
+        });
+      }
+      refetch();
       history.push("/");
     } catch (error) {
       logger.error(error);
@@ -68,17 +84,14 @@ const Form = ({ article, history }) => {
             placeholder="Enter description"
             rows={10}
           />
-          <ActionDropdown label="Save Draft">
+          <ActionDropdown label={isEdit ? "Update" : "Save Draft"}>
             <Menu>
               {STATUS.map((item, idx) => (
                 <MenuItem.Button
                   disabled={isSubmitting}
                   key={idx}
                   value={item}
-                  onClick={() => {
-                    values.status = item;
-                    handleSubmit(values);
-                  }}
+                  onClick={() => handleStatus(values, item)}
                 >
                   {item}
                 </MenuItem.Button>
@@ -90,7 +103,7 @@ const Form = ({ article, history }) => {
             label="Cancel"
             size="large"
             style="text"
-            type="submit"
+            type="reset"
           />
         </FormikForm>
       )}

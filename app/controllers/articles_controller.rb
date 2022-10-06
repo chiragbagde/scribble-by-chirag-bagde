@@ -3,7 +3,7 @@
 class ArticlesController < ApplicationController
   def index
     articles = Article.all
-    render status: :ok, json: { articles: articles }
+    respond_with_json({ articles: articles })
   end
 
   def create
@@ -12,7 +12,17 @@ class ArticlesController < ApplicationController
     respond_with_success("Article was successfully created")
   end
 
+  def update
+    @article = Article.find_by!(slug: params[:slug])
+    @article.update!(article_params)
+    respond_with_success("Article was successfully updated!")
+  end
+
   private
+
+    def load_task!
+      @article = Article.find_by!(slug: params[:slug])
+    end
 
     def article_params
       params.require(:article).permit(:title, :author, :status, :description, categories: [])
