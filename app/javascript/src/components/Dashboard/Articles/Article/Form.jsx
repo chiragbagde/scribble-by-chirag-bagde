@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Button, ActionDropdown } from "@bigbinary/neetoui";
+import { Button, ActionDropdown, Toastr } from "@bigbinary/neetoui";
 import { Input, Textarea, Select } from "@bigbinary/neetoui/formik";
 import { Formik, Form as FormikForm } from "formik";
 
@@ -33,12 +33,14 @@ const Form = ({ history, isEdit, article }) => {
           { ...values, author: "Oliver Smith", categories: arr },
           values.slug
         );
+        Toastr.success("Article updated successfully.");
       } else {
         await articlesApi.create({
           ...values,
           categories: arr,
           author: "Oliver Smith",
         });
+        Toastr.success("Article created successfully.");
       }
       refetch();
       history.push("/");

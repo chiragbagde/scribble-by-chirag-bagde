@@ -6,6 +6,7 @@ import {
   BrowserRouter as Router,
   useHistory,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 import { setAuthHeaders } from "apis/axios";
 import { initializeLogger } from "common/logger";
@@ -29,6 +30,7 @@ const App = () => {
 
   return (
     <Router>
+      <ToastContainer />
       <NavBar />
       <Switch history={history}>
         <Route exact component={Create} path="/articles/create" />
