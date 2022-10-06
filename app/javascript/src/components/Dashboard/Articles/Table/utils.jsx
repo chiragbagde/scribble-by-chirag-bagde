@@ -4,7 +4,7 @@ import { Edit, Delete } from "@bigbinary/neeto-icons";
 
 import { formatDateAndTime } from "../utils";
 
-export const contactsTableColumnData = () => [
+export const contactsTableColumnData = history => [
   {
     title: "TITLE",
     dataIndex: "title",
@@ -44,12 +44,19 @@ export const contactsTableColumnData = () => [
   },
   {
     title: "",
-    dataIndex: "option",
-    key: "option",
+    key: "slug",
     width: "15%",
-    render: () => (
+    render: ({ ...props }) => (
       <div className="flex  flex-row  gap-2">
-        <Edit size={20} />
+        <Edit
+          size={20}
+          onClick={() =>
+            history.push({
+              pathname: `/articles/${props.slug}/edit`,
+              state: { article: props },
+            })
+          }
+        />
         <Delete size={20} />
       </div>
     ),

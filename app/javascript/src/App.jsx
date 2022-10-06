@@ -10,8 +10,9 @@ import {
 import { setAuthHeaders } from "apis/axios";
 import { initializeLogger } from "common/logger";
 
+import NavBar from "./components/Common/Navbar";
 import Dashboard from "./components/Dashboard";
-import Create from "./components/Dashboard/Articles/Article/Create";
+import { Create, Edit } from "./components/Dashboard/Articles/Article";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -28,8 +29,10 @@ const App = () => {
 
   return (
     <Router>
+      <NavBar />
       <Switch history={history}>
         <Route exact component={Create} path="/articles/create" />
+        <Route exact component={Edit} path="/articles/:slug/edit" />
         <Route exact component={Dashboard} path="/" />
       </Switch>
     </Router>

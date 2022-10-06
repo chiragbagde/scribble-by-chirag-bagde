@@ -7,6 +7,14 @@ const create = payload =>
     article: payload,
   });
 
-const ArticlesApi = { list, create };
+const show = slug => axios.get(`/articles/${slug}`);
+
+function update(payload, slug) {
+  axios.put(`/articles/${slug}`, {
+    article: payload,
+  });
+}
+
+const ArticlesApi = { list, create, update, show };
 
 export default ArticlesApi;

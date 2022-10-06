@@ -26,6 +26,10 @@ const Articles = ({ history }) => {
     }
   };
 
+  const editArticle = slug => {
+    history.push(`/articles/${slug}/edit`);
+  };
+
   useEffect(() => {
     fetchArticles();
   }, []);
@@ -43,7 +47,7 @@ const Articles = ({ history }) => {
       <SideBar />
       <Container>
         <Header history={history} />
-        <Table data={articles} />
+        <Table data={articles} editArticle={editArticle} history={history} />
       </Container>
     </div>
   );
