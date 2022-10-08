@@ -19,7 +19,7 @@ const NavBar = () => (
               </Typography>
             </div>
             <NavItem name="Articles" path="/" />
-            <NavItem name="Settings" path="/articles" />
+            <NavItem name="Settings" path="/settings" />
           </div>
         </div>
         <div className="flex items-center justify-end gap-x-4">
