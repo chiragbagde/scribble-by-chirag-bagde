@@ -12,8 +12,10 @@ import Table from "./Table";
 
 const Articles = ({ history }) => {
   const [articles, setArticles] = useState([]);
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [filteredArticles, setFilteredArticles] = useState([]);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [deleteSlug, setDeleteSlug] = useState("");
   const [title, setTitle] = useState("");
 
@@ -23,10 +25,24 @@ const Articles = ({ history }) => {
         data: { articles },
       } = await articlesApi.list();
       setArticles(articles);
+      setFilteredArticles(articles);
       setLoading(false);
     } catch (error) {
       logger.error(error);
       setLoading(false);
+    }
+  };
+
+  const handleSearch = (e, searchTerm) => {
+    if (e.key === "Enter") {
+      const updatedArticles = articles.filter(
+        ({ title }) =>
+          title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
+      );
+      // console.log(updatedArticles);
+      searchTerm !== ""
+        ? setFilteredArticles(updatedArticles)
+        : setFilteredArticles(articles);
     }
   };
 
@@ -61,15 +77,23 @@ const Articles = ({ history }) => {
     <div className="flex h-screen w-full">
       <SideBar />
       <Container>
-        <Header history={history} />
-        <Table data={articles} handleDelete={handleDelete} history={history} />
+        <Header
+          handleSearch={handleSearch}
+          history={history}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
+        <Table
+          data={filteredArticles}
+          handleDelete={handleDelete}
+          history={history} />
         {showDeleteAlert && articles.length > 1 && (
           <DeleteAlert
             destroyArticle={destroyArticle}
             slug={deleteSlug}
             title={title}
             onClose={() => setShowDeleteAlert(false)}
-          />
+        />
         )}
       </Container>
     </div>
