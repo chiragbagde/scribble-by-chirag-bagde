@@ -1,43 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Button, ActionDropdown, Toastr } from "@bigbinary/neetoui";
 import { Input, Textarea, Select } from "@bigbinary/neetoui/formik";
 import { Formik, Form as FormikForm } from "formik";
 
 import articlesApi from "apis/articles";
+import CategoriesApi from "apis/categories";
+import PageLoader from "components/PageLoader";
 
-import {
-  CATEGORIES,
-  ARTICLES_FORM_VALIDATION_SCHEMA,
-  STATUS,
-} from "../constants";
+import { ARTICLES_FORM_VALIDATION_SCHEMA, STATUS } from "../constants";
 
 const { Menu, MenuItem } = ActionDropdown;
 
 const Form = ({ history, isEdit, article }) => {
   const [submitted, setSubmitted] = useState(false);
+  const [categoriesList, setCategoriesList] = useState([]);
+  const [changeCategory, setChangeCategory] = useState({
+    value: null,
+    label: "",
+  });
+  const [loading, setLoading] = useState(false);
 
   const refetch = async () => await articlesApi.list();
-
   function handleStatus(values, item) {
     values.status = item;
     handleSubmit(values);
     setSubmitted(true);
   }
 
+  const fetchCategories = async () => {
+    try {
+      const {
+        data: { categories },
+      } = await CategoriesApi.list();
+      // setCategories(categories);
+      const category = categories.map(category => ({
+        value: category.id,
+        label: category.category,
+      }));
+      setCategoriesList(category);
+      setLoading(false);
+    } catch (error) {
+      logger.error(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   const handleSubmit = async values => {
-    const arr = values.categories.map(({ label }) => label);
+    // console.log(values.category.value);
     try {
       if (isEdit) {
         await articlesApi.update(
-          { ...values, author: "Oliver Smith", categories: arr },
+          {
+            ...values,
+            author: "Oliver Smith",
+            assigned_category_id: values.category.value,
+          },
           values.slug
         );
         Toastr.success("Article updated successfully.");
       } else {
         await articlesApi.create({
           ...values,
-          categories: arr,
+          assigned_category_id: values.category.value,
           author: "Oliver Smith",
         });
         Toastr.success("Article created successfully.");
@@ -48,6 +77,14 @@ const Form = ({ history, isEdit, article }) => {
       logger.error(error);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="h-screen w-screen">
+        <PageLoader />
+      </div>
+    );
+  }
 
   return (
     <Formik
@@ -68,14 +105,23 @@ const Form = ({ history, isEdit, article }) => {
               placeholder="Enter article title."
             />
             <Select
-              isMulti
               isSearchable
               required
               className="w-full flex-grow-0"
               label="Category"
-              name="categories"
-              options={CATEGORIES}
+              name="category"
+              options={categoriesList}
               placeholder="Select Category."
+              value={
+                (changeCategory.value && changeCategory) ||
+                categoriesList[article.assigned_category_id - 1]
+              }
+              onChange={e =>
+                setChangeCategory({
+                  value: e.value,
+                  label: e.label,
+                })
+              }
             />
           </div>
           <Textarea

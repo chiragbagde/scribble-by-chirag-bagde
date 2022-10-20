@@ -2,7 +2,7 @@ import React from "react";
 
 import { MenuBar } from "@bigbinary/neetoui/layouts";
 
-const SideBar = () => (
+const SideBar = ({ history }) => (
   <MenuBar showMenu title="Articles">
     <MenuBar.Item
       active
@@ -12,6 +12,7 @@ const SideBar = () => (
     <MenuBar.Item
       description="Create & configure redirection rules"
       label="Redirection"
+      onClick={() => history.push("/settings/redirections")}
     />
     <MenuBar.Item
       description="Edit and Reorder KB Structure"

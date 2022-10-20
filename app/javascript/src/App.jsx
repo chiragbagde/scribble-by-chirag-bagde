@@ -14,6 +14,7 @@ import { initializeLogger } from "common/logger";
 import NavBar from "./components/Common/Navbar";
 import Dashboard from "./components/Dashboard";
 import { Create, Edit } from "./components/Dashboard/Articles/Article";
+import Eui from "./components/Dashboard/Eui";
 import Settings from "./components/Dashboard/Settings";
 
 const App = () => {
@@ -34,10 +35,11 @@ const App = () => {
       <ToastContainer />
       <NavBar />
       <Switch history={history}>
-        <Route exact component={Settings} path="/settings" />
+        <Route exact component={Settings} path="/settings/*" />
         <Route exact component={Create} path="/articles/create" />
         <Route exact component={Edit} path="/articles/:slug/edit" />
-        <Route exact component={Dashboard} path="/" />
+        <Route exact component={Eui} path="/public/*" />
+        <Route component={Dashboard} history={history} path="/" />
       </Switch>
     </Router>
   );

@@ -31,10 +31,10 @@ export const articlesTableColumnData = (history, handleDelete) => [
   },
   {
     title: "CATEGORY",
-    dataIndex: "categories",
+    dataIndex: "assigned_category",
     key: "category",
     width: "20%",
-    render: categories => categories.join(","),
+    render: assigned_category => assigned_category.category,
   },
   {
     title: "Status",
