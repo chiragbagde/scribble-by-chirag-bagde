@@ -5,6 +5,7 @@ import {
   Switch,
   BrowserRouter as Router,
   useHistory,
+  Redirect,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
@@ -19,6 +20,7 @@ import Settings from "./components/Dashboard/Settings";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
@@ -35,11 +37,25 @@ const App = () => {
       <ToastContainer />
       <NavBar />
       <Switch history={history}>
-        <Route exact component={Settings} path="/settings/*" />
+        <Route
+          exact
+          path="/settings/*"
+          render={props => (
+            <Settings {...props} setStatus={setStatus} status={status} />
+          )}
+        />
         <Route exact component={Create} path="/articles/create" />
         <Route exact component={Edit} path="/articles/:slug/edit" />
-        <Route exact component={Eui} path="/public/*" />
-        <Route component={Dashboard} history={history} path="/" />
+        <Route
+          exact
+          path="/public/*"
+          render={props => (
+            <Eui {...props} setStatus={setStatus} status={status} />
+          )}
+        />
+        <Route exact component={Dashboard} history={history} path="/" />
+        <Redirect from="/settings" to="/settings/" />
+        <Redirect from="/public" to="/public/" />
       </Switch>
     </Router>
   );

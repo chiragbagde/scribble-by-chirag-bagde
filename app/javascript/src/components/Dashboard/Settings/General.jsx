@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Check, Close } from "@bigbinary/neeto-icons";
 import { Typography, Checkbox, Button } from "@bigbinary/neetoui";
@@ -6,21 +6,67 @@ import { Input } from "@bigbinary/neetoui/formik";
 import { Formik, Form } from "formik";
 
 import authApi from "apis/auth";
+import PageLoader from "components/PageLoader";
 
-const General = () => {
+const General = ({ status, setStatus }) => {
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState({});
+
   const handleSubmit = async values => {
     const password = values.password;
     const site_name = values.siteName;
     try {
-      await authApi.signup({
+      await authApi.update({
         site_name,
         password,
+        status,
       });
-      // console.log(password);
     } catch (error) {
       logger.error(error);
     }
   };
+
+  const fetchUser = async () => {
+    try {
+      const {
+        data: { users },
+      } = await authApi.fetchUserDetails();
+      setUser(users[0]);
+      setStatus(users[0].status === "checked");
+      setLoading(false);
+    } catch (error) {
+      logger.error(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const handleStatus = async status => {
+    setStatus(status);
+    const currentStatus = status ? "checked" : "unchecked";
+    try {
+      await authApi.updateStatus(
+        {
+          site_name: user.site_name,
+          status: currentStatus,
+        },
+        user.id
+      );
+    } catch (error) {
+      logger.error(error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="h-screen w-screen">
+        <PageLoader />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto my-6">
@@ -43,10 +89,11 @@ const General = () => {
             </Typography>
           </div>
           <Checkbox
+            checked={status}
             className="my-6"
             id="checkbox_name"
             label="Password Protect Knowledge Base"
-            onChange={() => {}}
+            onChange={() => handleStatus(!status)}
           />
           <Input
             className="my-3"
