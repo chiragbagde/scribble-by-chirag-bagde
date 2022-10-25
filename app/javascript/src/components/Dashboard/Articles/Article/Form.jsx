@@ -51,7 +51,6 @@ const Form = ({ history, isEdit, article }) => {
   }, []);
 
   const handleSubmit = async values => {
-    // console.log(values.category.value);
     try {
       if (isEdit) {
         await articlesApi.update(

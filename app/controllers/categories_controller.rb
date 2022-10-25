@@ -1,23 +1,27 @@
 # frozen_string_literal: true
 
 class CategoriesController < ApplicationController
-  before_action :load_category!, only: %i[ update destroy]
+  before_action :load_category!, only: %i[ update destroy show]
+  before_action :current_user
 
   def show
-    category = Category.find_by!(id: params[:id])
-    assigned_articles = category.assigned_articles
-    respond_with_json({ category: category, assigned_articles: category.assigned_articles })
+    respond_with_json({ category: @category, assigned_articles: @category.assigned_articles })
   end
 
   def index
-    categories = Category.all.as_json(include: { assigned_articles: { only: %i[title description id created_at] } })
+    categories = Category.all.order(:order).as_json(
+      include: {
+        assigned_articles: {
+          only: %i[title description id
+          created_at]
+        }
+      })
     respond_with_json({ categories: categories })
   end
 
   def create
-    category = Category.new(category_params)
-    category.save!
-    respond_with_success("Category was successfully created")
+    category = Category.create!(category_params)
+    respond_with_success(t("successfully_created", entity: "Category"))
   end
 
   def destroy
@@ -27,18 +31,18 @@ class CategoriesController < ApplicationController
 
   def update
     @category.update!(category_params)
-    respond_with_success("Category was successfully updated!")
+    respond_with_success(t("successfully_updated", entity: "Category"))
   end
 
-  def update_number_two
-    category = Category.find_by!(id: params[:id])
+  def update_order
     categories = Category.all
-    params[:positions].each_with_index do |list_item, index|
+    params.require(:category).permit!
+    params[:category][:positions].each_with_index do |list_item, index|
       order = Category.find_by!(id: list_item)
       order.order = index
       order.save!
     end
-    respond_with_success("Category was successfully updated!")
+    respond_with_success(t("successfully_updated", entity: "Category"))
   end
 
   private
@@ -47,11 +51,7 @@ class CategoriesController < ApplicationController
       @category = Category.find_by!(id: params[:id])
     end
 
-    def category_update_params
-      params.permit(:positions, :id)
-    end
-
     def category_params
-      params.require(:category).permit(:category, :order)
+      params.require(:category).permit(:category, :order).merge(assigned_user_id: @current_user)
     end
 end

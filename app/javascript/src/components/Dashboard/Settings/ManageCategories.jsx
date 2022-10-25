@@ -23,7 +23,7 @@ const ManageCategories = () => {
       const {
         data: { categories },
       } = await CategoriesApi.list();
-      setCategories(categories.sort((a, b) => (a.order > b.order ? 1 : -1)));
+      setCategories(categories);
       setLoading(false);
     } catch (error) {
       logger.error(error);
@@ -89,8 +89,7 @@ const ManageCategories = () => {
   }
 
   return (
-    <div className="mx-auto my-6">
-      {/* {console.log(categories)} */}
+    <div className="mx-auto my-6 w-1/3">
       <Typography style="h3">Manage Categories</Typography>
       <Typography className="mt-1 text-gray-600" style="body1">
         Create and configure the categories inside your scribble.

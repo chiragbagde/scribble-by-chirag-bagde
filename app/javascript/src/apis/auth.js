@@ -5,9 +5,9 @@ const signup = payload =>
     user: payload,
   });
 
-const login = password =>
+const login = payload =>
   axios.post("/session", {
-    login: { password, site_name: "spinkart" },
+    login: payload,
   });
 
 const fetchUserDetails = () => axios.get("/users");

@@ -1,23 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Typography, Button } from "@bigbinary/neetoui";
 import { Input } from "@bigbinary/neetoui/formik";
 import { Formik, Form } from "formik";
 
 import authApi from "apis/auth";
+import PageLoader from "components/PageLoader";
+import { setToLocalStorage } from "utils/storage";
 
-const Authenticate = ({ setIsLoggedIn }) => {
-  const handleSubmit = async values => {
+const Authenticate = ({ history }) => {
+  const [loading, setLoading] = useState(true);
+  const [siteName, setSiteName] = useState("");
+
+  const fetchSiteTitle = async () => {
     try {
-      const response = await authApi.login(values.password);
-      if (response.status === 200) {
-        setIsLoggedIn(true);
-      }
+      const {
+        data: { users },
+      } = await authApi.fetchUserDetails();
+      setSiteName(users[0]["site_name"]);
+      setLoading(false);
     } catch (error) {
       logger.error(error);
-      setIsLoggedIn(false);
+      setLoading(false);
     }
   };
+
+  const handleSubmit = async values => {
+    try {
+      const response = await authApi.login({
+        password: values.password,
+        site_name: siteName,
+      });
+      setToLocalStorage({
+        authToken: response.data.authentication_token,
+      });
+      history.push("/public");
+    } catch (error) {
+      logger.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSiteTitle();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="h-screen w-screen">
+        <PageLoader />
+      </div>
+    );
+  }
 
   return (
     <div className="my-8 flex justify-center">

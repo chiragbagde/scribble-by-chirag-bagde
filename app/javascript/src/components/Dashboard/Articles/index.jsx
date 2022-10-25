@@ -39,7 +39,6 @@ const Articles = ({ history }) => {
         ({ title }) =>
           title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
       );
-      // console.log(updatedArticles);
       searchTerm !== ""
         ? setFilteredArticles(updatedArticles)
         : setFilteredArticles(articles);
@@ -86,14 +85,15 @@ const Articles = ({ history }) => {
         <Table
           data={filteredArticles}
           handleDelete={handleDelete}
-          history={history} />
+          history={history}
+        />
         {showDeleteAlert && articles.length > 1 && (
           <DeleteAlert
             destroyArticle={destroyArticle}
             slug={deleteSlug}
             title={title}
             onClose={() => setShowDeleteAlert(false)}
-        />
+          />
         )}
       </Container>
     </div>

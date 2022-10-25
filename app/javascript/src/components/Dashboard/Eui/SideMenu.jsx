@@ -55,10 +55,6 @@ const SideMenu = ({ history }) => {
 
   useEffect(() => {
     if (categories.length > 0) {
-      params[0] === "" &&
-        history.push(
-          `/public/${categories[0]["category"]}/${categories[0].assigned_articles[0].title}`
-        );
       const categoryData = categories.filter(
         ({ category }) => category === paramsCategory
       );

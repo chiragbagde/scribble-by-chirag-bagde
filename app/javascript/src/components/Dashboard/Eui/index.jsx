@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Typography } from "@bigbinary/neetoui";
+import { either, isEmpty, isNil } from "ramda";
+
+import { getFromLocalStorage } from "utils/storage";
 
 import Authenticate from "./Authenticate";
 import SideMenu from "./SideMenu";
 
-const Eui = ({ status, history }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+const Eui = ({ history }) => {
+  const authToken = getFromLocalStorage("authToken");
+  const isLoggedIn = !either(isNil, isEmpty)(authToken);
 
   return (
     <>
@@ -16,10 +20,10 @@ const Eui = ({ status, history }) => {
       >
         Spinkart
       </Typography>
-      {status && !isLoggedIn ? (
-        <Authenticate setIsLoggedIn={setIsLoggedIn} />
+      {isLoggedIn ? (
+        <SideMenu history={history} />
       ) : (
-        <SideMenu history={history} isLoggedIn={isLoggedIn} />
+        <Authenticate history={history} />
       )}
     </>
   );

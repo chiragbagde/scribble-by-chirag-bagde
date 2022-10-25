@@ -5,26 +5,28 @@ class UsersController < ApplicationController
 
   def index
     users = User.all
+    users = User.all.as_json(
+      include: {
+        assigned_articles: { only: %i[title description created_at] },
+        assigned_categories: { only: %i[category order] }, assigned_redirections: { only: %i[old_url new_url] }
+      })
     respond_with_json({ users: users })
   end
 
   def create
     user = User.new(user_params)
     user.save!
-    respond_with_success("User was successfully created!")
+    respond_with_success(t("successfully_created", entity: "User"))
   end
 
   def update
-    user = User.find_by!(id: params[:id])
-    user.update!(user_params)
-    respond_with_success("User was successfully updated!")
+    @user.update!(user_params)
+    respond_with_success(t("successfully_updated", entity: "User"))
   end
 
   def update_status
-    user = User.find_by!(id: params[:id])
-    puts params[:id]
-    user.update!(user_status_params)
-    respond_with_success("User status was successfully updated!")
+    @user.update!(user_status_params)
+    respond_with_success(t("successfully_updated", entity: "User"))
   end
 
   private

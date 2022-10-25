@@ -9,14 +9,13 @@ class ArticlesController < ApplicationController
   end
 
   def create
-    article = Article.new(article_params)
-    article.save!
-    respond_with_success("Article was successfully created")
+    article = Article.create(article_params)
+    respond_with_success(t("successfully_created", entity: "Article"))
   end
 
   def update
     @article.update!(article_params)
-    respond_with_success("Article was successfully updated!")
+    respond_with_success(t("successfully_created", entity: "Article"))
   end
 
   def destroy

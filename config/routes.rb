@@ -2,6 +2,7 @@
 
 Rails.application.routes.draw do
   resources :articles, except: %i[new edit show], param: :slug
+  resources :redirections, except: %i[new edit]
   resources :users do
     member do
       put :update_status
@@ -9,8 +10,7 @@ Rails.application.routes.draw do
   end
   resources :categories do
     member do
-      patch :update_number_two
-      put :update_number_two
+      put :update_order
     end
   end
   resource :session, only: :create
