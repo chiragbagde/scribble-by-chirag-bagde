@@ -4,7 +4,7 @@ import { Edit, Delete } from "@bigbinary/neeto-icons";
 
 import { formatDateAndTime } from "../utils";
 
-export const contactsTableColumnData = history => [
+export const articlesTableColumnData = (history, handleDelete) => [
   {
     title: "TITLE",
     dataIndex: "title",
@@ -31,10 +31,10 @@ export const contactsTableColumnData = history => [
   },
   {
     title: "CATEGORY",
-    dataIndex: "categories",
+    dataIndex: "assigned_category",
     key: "category",
     width: "20%",
-    render: categories => categories.join(","),
+    render: assigned_category => assigned_category.category,
   },
   {
     title: "Status",
@@ -57,7 +57,12 @@ export const contactsTableColumnData = history => [
             })
           }
         />
-        <Delete size={20} />
+        <Delete
+          size={20}
+          onClick={() => {
+            handleDelete(props.slug, props.title);
+          }}
+        />
       </div>
     ),
   },

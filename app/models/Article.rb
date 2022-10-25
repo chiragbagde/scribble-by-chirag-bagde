@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Article < ApplicationRecord
+  belongs_to :assigned_user, foreign_key: :assigned_site_id, class_name: "User"
+  belongs_to :assigned_category, foreign_key: :assigned_category_id, class_name: "Category"
+
   validates :title, presence: true, length: { maximum: 50 }
   validates :slug, uniqueness: true
   validate :slug_not_changed

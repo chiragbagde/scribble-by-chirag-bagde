@@ -8,6 +8,10 @@ class ApplicationController < ActionController::Base
 
   private
 
+    def current_user
+      @current_user = User.first.id
+    end
+
     def handle_validation_error(exception)
       respond_with_error(exception)
     end
