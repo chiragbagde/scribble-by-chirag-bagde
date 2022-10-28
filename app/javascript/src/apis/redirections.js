@@ -15,6 +15,6 @@ const update = (payload, id) => {
 
 const destroy = id => axios.delete(`/redirections/${id}`);
 
-const RedirectionsApi = { list, create, update, destroy };
+const redirectionsApi = { list, create, update, destroy };
 
-export default RedirectionsApi;
+export default redirectionsApi;

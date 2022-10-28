@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import { Typography, Button } from "@bigbinary/neetoui";
-import { Input } from "@bigbinary/neetoui/formik";
 import { Formik, Form } from "formik";
+import { Typography, Button } from "neetoui";
+import { Input } from "neetoui/formik";
 
-import authApi from "apis/auth";
+import organisationsApi from "apis/organisations";
 import PageLoader from "components/PageLoader";
 import { setToLocalStorage } from "utils/storage";
 
@@ -15,9 +15,9 @@ const Authenticate = ({ history }) => {
   const fetchSiteTitle = async () => {
     try {
       const {
-        data: { users },
-      } = await authApi.fetchUserDetails();
-      setSiteName(users[0]["site_name"]);
+        data: { organisations },
+      } = await organisationsApi.fetch();
+      setSiteName(organisations[0]["site_name"]);
       setLoading(false);
     } catch (error) {
       logger.error(error);
@@ -27,7 +27,7 @@ const Authenticate = ({ history }) => {
 
   const handleSubmit = async values => {
     try {
-      const response = await authApi.login({
+      const response = await organisationsApi.login({
         password: values.password,
         site_name: siteName,
       });

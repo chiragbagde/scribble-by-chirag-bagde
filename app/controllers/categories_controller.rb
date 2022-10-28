@@ -2,21 +2,21 @@
 
 class CategoriesController < ApplicationController
   before_action :load_category!, only: %i[ update destroy show]
-  before_action :current_user
-
-  def show
-    respond_with_json({ category: @category, assigned_articles: @category.assigned_articles })
-  end
+  before_action :current_organisation
 
   def index
     categories = Category.all.order(:order).as_json(
       include: {
         assigned_articles: {
-          only: %i[title description id
+          only: %i[title description id slug
           created_at]
         }
       })
     respond_with_json({ categories: categories })
+  end
+
+  def show
+    respond_with_json({ category: @category, assigned_articles: @category.assigned_articles })
   end
 
   def create
@@ -45,6 +45,11 @@ class CategoriesController < ApplicationController
     respond_with_success(t("successfully_updated", entity: "Category"))
   end
 
+  def filter
+    categories = Category.filter(params.permit(:category))
+    respond_with_json({ categories: categories })
+  end
+
   private
 
     def load_category!
@@ -52,6 +57,6 @@ class CategoriesController < ApplicationController
     end
 
     def category_params
-      params.require(:category).permit(:category, :order).merge(assigned_user_id: @current_user)
+      params.require(:category).permit(:category, :order).merge(assigned_organisation_id: @current_organisation)
     end
 end

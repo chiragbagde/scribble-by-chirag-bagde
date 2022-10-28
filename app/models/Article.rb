@@ -1,16 +1,25 @@
 # frozen_string_literal: true
 
 class Article < ApplicationRecord
-  belongs_to :assigned_user, foreign_key: :assigned_site_id, class_name: "User"
+  include Filterable
+  belongs_to :assigned_organisation, foreign_key: :assigned_organisation_id, class_name: "Organisation"
   belongs_to :assigned_category, foreign_key: :assigned_category_id, class_name: "Category"
 
-  validates :title, presence: true, length: { maximum: 50 }
-  validates :slug, uniqueness: true
+  validates :title, presence: true, length: { maximum: 50 }, format: { with: /\A[a-z0-9A-Z]+\z/ }
   validate :slug_not_changed
+  validates :description, presence: true
+  validates :status, presence: true
 
-  before_create :set_slug
+  before_create :check_status
+  before_update :check_status
 
   private
+
+    def check_status
+      if status === "Published"
+        set_slug
+      end
+    end
 
     def set_slug
       itr = 1
@@ -24,7 +33,7 @@ class Article < ApplicationRecord
     end
 
     def slug_not_changed
-      if slug_changed? && self.persisted?
+      if slug && slug_changed? && self.persisted?
         errors.add(:slug, "is immutable!")
       end
     end

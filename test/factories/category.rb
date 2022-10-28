@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :category do
-    category { Faker::Name.name }
+    category { "General" }
     order { Faker::Number.between(from: 1, to: 100) }
   end
 end

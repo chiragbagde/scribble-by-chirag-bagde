@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 
-import { Delete, Edit, Reorder } from "@bigbinary/neeto-icons";
-import { Typography, Toastr } from "@bigbinary/neetoui";
-import { Input } from "@bigbinary/neetoui/formik";
 import { Formik, Form } from "formik";
+import { Delete, Edit, Reorder, Plus } from "neetoicons";
+import { Typography, Toastr } from "neetoui";
+import { Input } from "neetoui/formik";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-import CategoriesApi from "apis/categories";
+import categoriesApi from "apis/categories";
 import PageLoader from "components/PageLoader";
 
 import CreateCategories from "./CreateCategories";
 
 const ManageCategories = () => {
   const [categories, setCategories] = useState([]);
+  const [createCategory, setCreateCategory] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showInput, setShowInput] = useState(false);
   const [showId, setShowId] = useState(0);
@@ -22,7 +23,7 @@ const ManageCategories = () => {
     try {
       const {
         data: { categories },
-      } = await CategoriesApi.list();
+      } = await categoriesApi.list();
       setCategories(categories);
       setLoading(false);
     } catch (error) {
@@ -34,7 +35,8 @@ const ManageCategories = () => {
 
   const handleSubmit = async values => {
     try {
-      await CategoriesApi.update({ ...values }, showId);
+      setOrderUpdated(true);
+      await categoriesApi.update({ ...values }, showId);
       Toastr.success("Category updated successfully.");
     } catch (error) {
       logger.error(error);
@@ -44,14 +46,12 @@ const ManageCategories = () => {
     setShowInput(false);
   };
 
-  const handle_update_two = async (positions, reorderedItem) => {
+  const handle_updatePosition = async (positions, reorderedItem) => {
     try {
-      await CategoriesApi.update_two(positions, reorderedItem.id);
-      setOrderUpdated(true);
+      await categoriesApi.updatePosition(positions, reorderedItem.id);
     } catch (error) {
       logger.error(error);
       setLoading(false);
-      setOrderUpdated(false);
     }
   };
 
@@ -61,12 +61,12 @@ const ManageCategories = () => {
     items.splice(result.destination.index, 0, reorderedItem);
     const positions = items.map(({ id }) => id);
     setCategories(items);
-    handle_update_two(positions, reorderedItem);
+    handle_updatePosition(positions, reorderedItem);
   };
 
   const handleDelete = async id => {
     try {
-      await CategoriesApi.destroy(id);
+      await categoriesApi.destroy(id);
       Toastr.success("Category deleted successfully.");
     } catch (error) {
       logger.error(error);
@@ -94,9 +94,17 @@ const ManageCategories = () => {
       <Typography className="mt-1 text-gray-600" style="body1">
         Create and configure the categories inside your scribble.
       </Typography>
+      <div className="my-6 flex text-indigo-500">
+        <Plus size={20} onClick={() => setCreateCategory(!createCategory)} />
+        <Typography className="ml-1" style="h4">
+          Add New Category
+        </Typography>
+      </div>
       <CreateCategories
+        createCategory={createCategory}
         fetchCategories={fetchCategories}
         length={categories.length}
+        setCreateCategory={setCreateCategory}
       />
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <Droppable droppableId="categories">

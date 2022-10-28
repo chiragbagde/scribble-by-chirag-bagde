@@ -2,21 +2,41 @@ import axios from "axios";
 
 const list = () => axios.get("/articles");
 
+const filter = params => axios.get("/articles/filter", { params });
+
+const filterByCategory = params =>
+  axios.get("/articles/filter_by_category", { params });
+
+const filterStatus = params => axios.get("/articles/filter_status", { params });
+
+const filterColumns = params =>
+  axios.get("/articles/filter_columns", { params });
+
 const create = payload =>
   axios.post("/articles", {
     article: payload,
   });
 
-const show = slug => axios.get(`/articles/${slug}`);
+const show = id => axios.get(`/articles/${id}`);
 
-const update = (payload, slug) => {
-  axios.put(`/articles/${slug}`, {
+const update = (payload, id) => {
+  axios.put(`/articles/${id}`, {
     article: payload,
   });
 };
 
-const destroy = slug => axios.delete(`/articles/${slug}`);
+const destroy = id => axios.delete(`/articles/${id}`);
 
-const ArticlesApi = { list, create, update, show, destroy };
+const articlesApi = {
+  list,
+  create,
+  update,
+  show,
+  destroy,
+  filterByCategory,
+  filterStatus,
+  filter,
+  filterColumns,
+};
 
-export default ArticlesApi;
+export default articlesApi;

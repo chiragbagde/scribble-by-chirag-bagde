@@ -1,32 +1,41 @@
 import React from "react";
 
-import { Switch, Route, Redirect } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import General from "./General";
 import ManageCategories from "./ManageCategories";
 import Redirections from "./Redirections";
 import SideMenu from "./SideMenu";
 
-const Settings = ({ history, status, setStatus }) => (
-  <div className="flex">
-    <SideMenu history={history} />
-    <Switch>
-      <Redirect exact from="/settings" to="/settings/general" />
-      <Route
-        exact
-        path="/settings/general"
-        render={props => (
-          <General {...props} setStatus={setStatus} status={status} />
-        )}
-      />
-      <Route exact component={Redirections} path="/settings/redirections" />
-      <Route
-        exact
-        component={ManageCategories}
-        path="/settings/managecategories"
-      />
-    </Switch>
-  </div>
-);
+const Settings = ({ history, status, setStatus }) => {
+  const location = useLocation();
+  const menu = location.search.split("=")[1];
+  const selectedSideMenu = location.search === "" ? "General" : menu;
+  if (location.search === "") {
+    history.push({
+      pathname: "/settings",
+      search: `?tab=General`,
+    });
+  }
+  const renderComponents = component => {
+    switch (component) {
+      case "General":
+        return <General setStatus={setStatus} status={status} />;
+      case "Manage%20Categories":
+        return <ManageCategories />;
+      case "Redirections":
+        return <Redirections />;
+    }
+
+    return <General setStatus={setStatus} status={status} />;
+  };
+
+  return (
+    <div className="flex h-screen w-full">
+      <SideMenu history={history} menu={menu} />
+      {renderComponents(selectedSideMenu)}
+    </div>
+  );
+};
 
 export default Settings;
