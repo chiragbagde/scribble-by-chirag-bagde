@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Article < ApplicationRecord
-  include Filterable
   belongs_to :assigned_organisation, foreign_key: :assigned_organisation_id, class_name: "Organisation"
   belongs_to :assigned_category, foreign_key: :assigned_category_id, class_name: "Category"
 
