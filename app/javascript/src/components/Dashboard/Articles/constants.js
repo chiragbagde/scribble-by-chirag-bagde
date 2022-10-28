@@ -4,7 +4,10 @@ import * as yup from "yup";
 export const ARTICLES_FORM_INITIAL_FORM_VALUES = {
   title: "",
   description: "",
-  categories: [],
+  assigned_category: {
+    id: "",
+    category: "",
+  },
 };
 
 export const CATEGORIES = buildSelectOptions([
@@ -12,6 +15,16 @@ export const CATEGORIES = buildSelectOptions([
   "Getting Started",
   "Security & Privacy",
 ]);
+
+export const MENU_ITEMS = ["All", "Draft", "Published"];
+
+export const filteringOptions = [
+  "title",
+  "status",
+  "author",
+  "created_at",
+  "assigned_category_id",
+];
 
 export const ARTICLES_FORM_VALIDATION_SCHEMA = yup.object().shape({
   title: yup.string().required("Title is required"),

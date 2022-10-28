@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const signup = payload =>
-  axios.post("/users", {
-    user: payload,
+  axios.post("/organisations", {
+    organisation: payload,
   });
 
 const login = payload =>
@@ -10,16 +10,16 @@ const login = payload =>
     login: payload,
   });
 
-const fetchUserDetails = () => axios.get("/users");
+const fetchOrganisationDetails = () => axios.get("/organisations");
 
 const updateStatus = (payload, id) =>
-  axios.put(`/users/${id}/update_status`, {
-    user: payload,
+  axios.put(`/organisations/${id}/update_status`, {
+    organisation: payload,
   });
 
 const update = (payload, id) =>
-  axios.put(`/users/${id}`, {
-    user: payload,
+  axios.put(`/organisations/${id}`, {
+    organisation: payload,
   });
 
 const authApi = {
@@ -27,7 +27,7 @@ const authApi = {
   updateStatus,
   signup,
   update,
-  fetchUserDetails,
+  fetchOrganisationDetails,
 };
 
 export default authApi;

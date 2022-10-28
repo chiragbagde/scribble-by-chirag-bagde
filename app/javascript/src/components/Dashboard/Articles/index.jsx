@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Container } from "@bigbinary/neetoui/layouts";
 
-import articlesApi from "apis/articles";
+import ArticlesApi from "apis/articles";
 import PageLoader from "components/PageLoader";
 
 import DeleteAlert from "./Article/DeleteAlert";
@@ -13,6 +13,7 @@ import Table from "./Table";
 const Articles = ({ history }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [columns, setColumns] = useState([]);
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,7 +24,7 @@ const Articles = ({ history }) => {
     try {
       const {
         data: { articles },
-      } = await articlesApi.list();
+      } = await ArticlesApi.list();
       setArticles(articles);
       setFilteredArticles(articles);
       setLoading(false);
@@ -47,7 +48,7 @@ const Articles = ({ history }) => {
 
   const destroyArticle = async slug => {
     try {
-      await articlesApi.destroy(slug);
+      await ArticlesApi.destroy(slug);
       await fetchArticles();
     } catch (error) {
       logger.error(error);
@@ -74,15 +75,22 @@ const Articles = ({ history }) => {
 
   return (
     <div className="flex h-screen w-full">
-      <SideBar />
+      <SideBar
+        fetchArticles={fetchArticles}
+        filteredArticles={filteredArticles}
+        setFilteredArticles={setFilteredArticles}
+      />
       <Container>
         <Header
+          columns={columns}
           handleSearch={handleSearch}
           history={history}
           searchTerm={searchTerm}
+          setColumns={setColumns}
           setSearchTerm={setSearchTerm}
         />
         <Table
+          columns={columns}
           data={filteredArticles}
           handleDelete={handleDelete}
           history={history}

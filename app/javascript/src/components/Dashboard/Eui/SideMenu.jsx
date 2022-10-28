@@ -19,21 +19,23 @@ const SideMenu = ({ history }) => {
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState([]);
   const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
   const [active, setActive] = useState(null);
   const [description, setDescription] = useState("");
   const [createdAt, setCreatedAt] = useState("");
 
-  const params = useParams();
-  const [paramsCategory, paramsTitle] = params[0].split("/");
-
-  const handleClick = ({ title, description, created_at }, category) => {
+  const handleClick = ({ slug, title, description, created_at }, category) => {
     setTitle(title);
     setDescription(description);
     setCreatedAt(created_at);
     setActive(title);
     setCategory(category);
-    history.push(`/public/${category}/${title}`);
+    setSlug(slug);
+    history.push(`/public/${category}/${slug}`);
   };
+
+  const params = useParams();
+  const [paramsCategory, paramsSlug] = params[0].split("/");
 
   const fetchCategories = async () => {
     try {
@@ -42,6 +44,11 @@ const SideMenu = ({ history }) => {
       } = await CategoriesApi.list();
       setCategories(categories.sort((a, b) => (a.order > b.order ? 1 : -1)));
       setLoading(false);
+      if (params[0] === "") {
+        history.push(
+          `/public/${categories[0].category}/${categories[0]["assigned_articles"][0]["slug"]}`
+        );
+      }
     } catch (error) {
       logger.error(error);
       setLoading(false);
@@ -50,18 +57,18 @@ const SideMenu = ({ history }) => {
 
   useEffect(() => {
     fetchCategories();
-    if (params[0] === "") history.push(`/public/General/scribble`);
   }, []);
 
   useEffect(() => {
-    if (categories.length > 0) {
+    if (categories.length > 0 && !loading) {
       const categoryData = categories.filter(
         ({ category }) => category === paramsCategory
       );
       const paramsArticle = categoryData[0].assigned_articles.filter(
-        ({ title }) => title === paramsTitle
+        ({ slug }) => slug === paramsSlug
       )[0];
       setTitle(paramsArticle.title);
+      setSlug(paramsArticle.slug);
       setDescription(paramsArticle.description);
       setCreatedAt(paramsArticle.created_at);
       setCategory(categoryData[0]["category"]);
@@ -89,24 +96,25 @@ const SideMenu = ({ history }) => {
                 label={category["category"]}
               >
                 {category["assigned_articles"].map(
-                  ({ title, description, created_at }, idx) => (
-                    <MenuItem
-                      className={`${active === title && "text-indigo-600"}`}
-                      key={idx}
-                      active={
-                        category["category"] === paramsCategory &&
-                        title === paramsTitle
-                      }
-                      onClick={() =>
-                        handleClick(
-                          { title, description, created_at },
-                          category["category"]
-                        )
-                      }
-                    >
-                      {title}
-                    </MenuItem>
-                  )
+                  ({ slug, title, description, created_at }, idx) =>
+                    slug && (
+                      <MenuItem
+                        className={`${active === title && "text-indigo-600"}`}
+                        key={idx}
+                        active={
+                          category["category"] === paramsCategory &&
+                          title === paramsSlug
+                        }
+                        onClick={() =>
+                          handleClick(
+                            { slug, title, description, created_at },
+                            category["category"]
+                          )
+                        }
+                      >
+                        {title}
+                      </MenuItem>
+                    )
                 )}
               </SubMenu>
             ))}
@@ -115,7 +123,7 @@ const SideMenu = ({ history }) => {
         <Switch>
           <Route
             exact
-            path={`/public/${category}/${title}`}
+            path={`/public/${category}/${slug}`}
             render={props => (
               <Detail
                 {...props}

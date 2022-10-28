@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 
-import { Check, Plus } from "@bigbinary/neeto-icons";
-import { Typography } from "@bigbinary/neetoui";
+import { Check } from "@bigbinary/neeto-icons";
 import { Input } from "@bigbinary/neetoui/formik";
 import { Formik, Form } from "formik";
 
 import CategoriesApi from "apis/categories";
 
-const CreateCategories = ({ fetchCategories, length }) => {
-  const [createCategory, setCreateCategory] = useState(false);
-
+const CreateCategories = ({
+  fetchCategories,
+  length,
+  createCategory,
+  setCreateCategory,
+}) => {
   const handleSubmit = async values => {
     try {
       await CategoriesApi.create({ category: values.category, order: length });
@@ -21,26 +23,18 @@ const CreateCategories = ({ fetchCategories, length }) => {
   };
 
   return (
-    <>
-      <div className="my-6 flex text-indigo-500">
-        <Plus size={20} onClick={() => setCreateCategory(!createCategory)} />
-        <Typography className="ml-1" style="h4">
-          Add New Category
-        </Typography>
-      </div>
-      {createCategory && (
-        <Formik initialValues={{ category: "" }} onSubmit={handleSubmit}>
-          <Form>
-            <Input
-              className="my-6 h-8 w-64"
-              name="category"
-              placeholder="Enabling 2FA"
-              suffix={<Check />}
-            />
-          </Form>
-        </Formik>
-      )}
-    </>
+    createCategory && (
+      <Formik initialValues={{ category: "" }} onSubmit={handleSubmit}>
+        <Form>
+          <Input
+            className="my-6 h-8 w-64"
+            name="category"
+            placeholder="Enabling 2FA"
+            suffix={<Check />}
+          />
+        </Form>
+      </Formik>
+    )
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Delete, Edit, Reorder } from "@bigbinary/neeto-icons";
+import { Delete, Edit, Reorder, Plus } from "@bigbinary/neeto-icons";
 import { Typography, Toastr } from "@bigbinary/neetoui";
 import { Input } from "@bigbinary/neetoui/formik";
 import { Formik, Form } from "formik";
@@ -13,6 +13,7 @@ import CreateCategories from "./CreateCategories";
 
 const ManageCategories = () => {
   const [categories, setCategories] = useState([]);
+  const [createCategory, setCreateCategory] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showInput, setShowInput] = useState(false);
   const [showId, setShowId] = useState(0);
@@ -34,6 +35,7 @@ const ManageCategories = () => {
 
   const handleSubmit = async values => {
     try {
+      setOrderUpdated(true);
       await CategoriesApi.update({ ...values }, showId);
       Toastr.success("Category updated successfully.");
     } catch (error) {
@@ -47,11 +49,9 @@ const ManageCategories = () => {
   const handle_update_two = async (positions, reorderedItem) => {
     try {
       await CategoriesApi.update_two(positions, reorderedItem.id);
-      setOrderUpdated(true);
     } catch (error) {
       logger.error(error);
       setLoading(false);
-      setOrderUpdated(false);
     }
   };
 
@@ -94,9 +94,17 @@ const ManageCategories = () => {
       <Typography className="mt-1 text-gray-600" style="body1">
         Create and configure the categories inside your scribble.
       </Typography>
+      <div className="my-6 flex text-indigo-500">
+        <Plus size={20} onClick={() => setCreateCategory(!createCategory)} />
+        <Typography className="ml-1" style="h4">
+          Add New Category
+        </Typography>
+      </div>
       <CreateCategories
+        createCategory={createCategory}
         fetchCategories={fetchCategories}
         length={categories.length}
+        setCreateCategory={setCreateCategory}
       />
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <Droppable droppableId="categories">

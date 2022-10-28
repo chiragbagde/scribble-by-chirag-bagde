@@ -33,7 +33,6 @@ const Form = ({ history, isEdit, article }) => {
       const {
         data: { categories },
       } = await CategoriesApi.list();
-      // setCategories(categories);
       const category = categories.map(category => ({
         value: category.id,
         label: category.category,
@@ -57,15 +56,15 @@ const Form = ({ history, isEdit, article }) => {
           {
             ...values,
             author: "Oliver Smith",
-            assigned_category_id: values.category.value,
+            assigned_category_id: changeCategory.value,
           },
-          values.slug
+          values.id
         );
         Toastr.success("Article updated successfully.");
       } else {
         await articlesApi.create({
           ...values,
-          assigned_category_id: values.category.value,
+          assigned_category_id: changeCategory.value,
           author: "Oliver Smith",
         });
         Toastr.success("Article created successfully.");

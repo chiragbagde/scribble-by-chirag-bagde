@@ -8,8 +8,8 @@ class ApplicationController < ActionController::Base
 
   private
 
-    def current_user
-      @current_user = User.first.id
+    def current_organisation
+      @current_organisation = Organisation.first.id
     end
 
     def handle_validation_error(exception)

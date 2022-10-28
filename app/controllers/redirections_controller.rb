@@ -2,6 +2,7 @@
 
 class RedirectionsController < ApplicationController
   before_action :load_redirection!, only: %i[ update destroy show]
+  before_action :current_organisation
 
   def index
     redirections = Redirection.all
@@ -34,6 +35,6 @@ class RedirectionsController < ApplicationController
     end
 
     def redirection_params
-      params.require(:redirection).permit(:old_url, :new_url)
+      params.require(:redirection).permit(:old_url, :new_url).merge(assigned_organisation_id: @current_organisation)
     end
 end
