@@ -1,28 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { MenuBar } from "neetoui/layouts";
-import { useParams } from "react-router-dom";
 
 import { MENU_ITEMS } from "./constants";
 
-const SideMenu = ({ history }) => {
-  const [active, setActive] = useState(null);
-  const paramsUrl = useParams()[0];
+const SideMenu = ({ history, menu }) => {
+  const selectedMenu =
+    menu === "Manage%20Categories" ? "Manage Categories" : menu;
 
-  const handleClick = (url, id) => {
-    history.push(url);
-    setActive(id);
+  const handleClick = label => {
+    const searchTerm =
+      label !== "Manage Categories" ? label : "Manage%20Categories";
+    history.push({
+      pathname: "/settings",
+      search: `?tab=${searchTerm}`,
+    });
   };
 
   return (
     <MenuBar showMenu>
-      {MENU_ITEMS.map(({ label, description, url, id, value }) => (
+      {MENU_ITEMS.map(({ label, description, id }) => (
         <MenuBar.Item
-          active={active === id || paramsUrl === value}
+          active={selectedMenu === label}
           description={description}
           key={id}
           label={label}
-          onClick={() => handleClick(url, id)}
+          onClick={() => handleClick(label)}
         />
       ))}
     </MenuBar>

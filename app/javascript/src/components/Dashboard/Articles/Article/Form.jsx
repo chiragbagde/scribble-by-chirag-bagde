@@ -30,6 +30,20 @@ const Form = ({ history, isEdit, article }) => {
     handleSubmit(values);
   }
 
+  const handleInitialEdit = categories => {
+    if (isEdit) {
+      const matchingCategory = categories.map(
+        ({ id }) => id === article.assigned_category_id
+      );
+      const matchingId = matchingCategory.indexOf(true);
+      setChangeCategory({
+        value: matchingId,
+        label: categories[matchingId].category,
+      });
+      setCategoryId(matchingId);
+    }
+  };
+
   const fetchCategories = async () => {
     try {
       const {
@@ -39,18 +53,12 @@ const Form = ({ history, isEdit, article }) => {
         value: category.id,
         label: category.category,
       }));
-      if (isEdit) {
-        const matchingCategory = categories.map(
-          ({ id }) => id === article.assigned_category_id
-        );
-        setCategoryId(matchingCategory.indexOf(true));
-      }
+      handleInitialEdit(categories);
       setCategoriesList(category);
-      setLoading(false);
     } catch (error) {
       logger.error(error);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   useEffect(() => {

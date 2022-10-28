@@ -7,7 +7,7 @@ class OrganisationTest < ActiveSupport::TestCase
   def setup
     @organisation = create(:organisation)
     @category = create(:category, assigned_organisation_id: @organisation.id)
-    # @article = create(:article, assigned_category_id: @category.id, assigned_organisation_id: @organisation.id)
+    @article = create(:article, assigned_category_id: @category.id, assigned_organisation_id: @organisation.id)
   end
 
   def test_site_name_cannot_be_null
@@ -30,11 +30,5 @@ class OrganisationTest < ActiveSupport::TestCase
 
     assert_not_same @organisation.authentication_token,
       second_organisation.authentication_token
-  end
-
-  def test_organisations_cannot_be_deleted
-    # assert_equal task.assigned_user_id, @user.id
-    assert_not @organisation.destroy
-    assert_response :ok
   end
 end

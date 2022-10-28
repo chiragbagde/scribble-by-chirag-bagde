@@ -18,7 +18,7 @@ const CreateCategories = ({
       await categoriesApi.create({ category: values.category, order: length });
       setCreateCategory(!createCategory);
       fetchCategories();
-      Toastr.success("Category updated successfully.");
+      Toastr.success("Category created successfully.");
     } catch (error) {
       logger.error(error);
     }

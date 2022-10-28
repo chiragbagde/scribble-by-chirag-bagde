@@ -5,7 +5,7 @@ export const ARTICLES_FORM_INITIAL_FORM_VALUES = {
   title: "",
   description: "",
   category: {
-    value: null,
+    value: "",
     label: "",
   },
 };

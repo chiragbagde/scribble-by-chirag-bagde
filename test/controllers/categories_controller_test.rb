@@ -4,7 +4,8 @@ require "test_helper"
 
 class CategoriesControllerTest < ActionDispatch::IntegrationTest
   def setup
-    @category = create(:category)
+    @organisation = create(:organisation)
+    @category = create(:category, assigned_organisation_id: @organisation.id)
   end
 
   def test_should_list_all_categories

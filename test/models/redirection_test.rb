@@ -4,7 +4,8 @@ require "test_helper"
 
 class RedirectionTest < ActiveSupport::TestCase
   def setup
-    @redirection = create(:redirection)
+    @organisation = create(:organisation)
+    @redirection = create(:redirection, assigned_organisation_id: @organisation.id)
   end
 
   def test_old_url_uniqueness

@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :article do
-    title { Faker::Name.name }
+    title { "scribble" }
     description { Faker::Lorem.paragraph }
-    status { Faker::Name.name }
+    status { "Published" }
   end
 end

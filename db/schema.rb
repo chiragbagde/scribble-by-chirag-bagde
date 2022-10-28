@@ -20,7 +20,6 @@ ActiveRecord::Schema.define(version: 2022_10_26_044834) do
   create_table "articles", force: :cascade do |t|
     t.text "title"
     t.string "author"
-    t.string "categories", default: [], array: true
     t.string "status"
     t.text "description"
     t.datetime "created_at", precision: 6, null: false

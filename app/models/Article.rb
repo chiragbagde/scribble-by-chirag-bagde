@@ -7,6 +7,8 @@ class Article < ApplicationRecord
 
   validates :title, presence: true, length: { maximum: 50 }, format: { with: /\A[a-z0-9A-Z]+\z/ }
   validate :slug_not_changed
+  validates :description, presence: true
+  validates :status, presence: true
 
   before_create :check_status
   before_update :check_status
