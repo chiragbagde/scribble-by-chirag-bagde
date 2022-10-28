@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Edit, Delete } from "@bigbinary/neeto-icons";
+import { Edit, Delete } from "neetoicons";
 
 import { formatDateAndTime } from "../utils";
 
@@ -25,11 +25,15 @@ export const articlesTableColumnData = (history, handleDelete, columns) =>
     {
       title: "DATE",
       dataIndex: "created_at",
-      key: "created_at",
+      key: "created",
       width: "20%",
-      render: created_at => (
-        <div className="flex  flex-row  gap-2">
-          {formatDateAndTime(created_at)}
+      render: (created_at, { status }) => (
+        <div>
+          {status === "Draft" ? (
+            <span>-----</span>
+          ) : (
+            <span>{formatDateAndTime(created_at)}</span>
+          )}
         </div>
       ),
     },
@@ -80,5 +84,5 @@ export const articlesTableColumnData = (history, handleDelete, columns) =>
     column =>
       columns.includes(column?.key) ||
       column.key === "slug" ||
-      (columns.includes("assigned_category_id") && column.key === "category")
+      column.key === "title"
   );

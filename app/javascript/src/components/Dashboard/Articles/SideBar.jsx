@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-import { Search, Plus } from "@bigbinary/neeto-icons";
-import { Typography } from "@bigbinary/neetoui";
-import { MenuBar } from "@bigbinary/neetoui/layouts";
+import { Search, Plus } from "neetoicons";
+import { Typography } from "neetoui";
+import { MenuBar } from "neetoui/layouts";
 
-import ArticlesApi from "apis/articles";
-import CategoriesApi from "apis/categories";
+import articlesApi from "apis/articles";
+import categoriesApi from "apis/categories";
 import PageLoader from "components/PageLoader";
 
 import { MENU_ITEMS } from "./constants";
@@ -31,7 +31,7 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
       } else {
         const {
           data: { articles },
-        } = await ArticlesApi.filter_status({ status: menu });
+        } = await articlesApi.filterStatus({ status: menu });
         setFilteredArticles(articles);
       }
     } catch (error) {
@@ -49,7 +49,7 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
       setSelectedCategories(Array.from(newSelectedCategories));
       const {
         data: { articles },
-      } = await ArticlesApi.filter_by_category({
+      } = await articlesApi.filterByCategory({
         category: newSelectedCategories,
       });
       setFilteredArticles(articles);
@@ -63,7 +63,7 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
     try {
       const {
         data: { categories },
-      } = await CategoriesApi.list();
+      } = await categoriesApi.list();
       setCategories(categories);
       setFilteredItems(categories);
       setLoading(false);
@@ -73,17 +73,18 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
     }
   };
 
-  const handleSearch = () => {
-    const query = searchTerm;
-    let updatedCategoryList = [...categories];
-    updatedCategoryList = categories.filter(
-      category =>
-        category.category.toLowerCase().indexOf(query.toLowerCase()) !== -1
-    );
-
-    searchTerm === ""
-      ? setFilteredItems(categories)
-      : setFilteredItems(updatedCategoryList);
+  const handleSearchTerm = async () => {
+    try {
+      {
+        const {
+          data: { categories },
+        } = await categoriesApi.filter({ category: searchTerm });
+        setFilteredItems(categories);
+      }
+    } catch (error) {
+      logger.error(error);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -132,10 +133,11 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
       </MenuBar.SubTitle>
       <MenuBar.Search
         collapse={isSearchCollapsed}
+        placeholder="Search and press Enter"
         value={searchTerm}
         onChange={e => setSearchTerm(e.target.value)}
         onCollapse={() => setIsSearchCollapsed(true)}
-        onKeyDown={handleSearch}
+        onKeyDown={handleSearchTerm}
       />
       {setCreateCategory && (
         <CreateCategories
@@ -153,6 +155,7 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
             selectedCategories.includes(category.category) && "bg-white"
           }`}
           onClick={() => handleUpdateCategories(category.category)}
+          // DblClick={}
         />
       ))}
     </MenuBar>

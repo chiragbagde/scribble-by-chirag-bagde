@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Table as NeetoUITable } from "@bigbinary/neetoui";
+import { Table as NeetoUITable } from "neetoui";
 
 import { articlesTableColumnData } from "./utils";
 

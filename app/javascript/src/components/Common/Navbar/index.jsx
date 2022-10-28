@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Button, Typography } from "@bigbinary/neetoui";
+import { Button, Typography } from "neetoui";
 import { useHistory } from "react-router-dom";
 
 import NavItem from "./NavItem";
@@ -16,7 +16,7 @@ const NavBar = () => {
             <div className="hidden lg:flex">
               <div
                 className="mr-3 inline-flex items-center px-1 pt-1
-                      text-sm font-semibold leading-5 hover:text-indigo-500"
+                      text-sm font-semibold leading-5 focus:text-indigo-500"
               >
                 <Typography style="h4" weight="bold">
                   Srcibble
@@ -30,6 +30,10 @@ const NavBar = () => {
             <Button
               label="Preview"
               style="secondary"
+              tooltipProps={{
+                content: "http://localhost:3000/public/",
+                position: "bottom",
+              }}
               onClick={() => history.push("/public/")}
             />
           </div>

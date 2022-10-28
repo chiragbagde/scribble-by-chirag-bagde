@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     end
   end
   resources :categories do
+    get "filter", on: :collection
     member do
       put :update_order
     end

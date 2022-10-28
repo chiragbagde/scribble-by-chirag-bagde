@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Typography } from "@bigbinary/neetoui";
+import { Typography } from "neetoui";
 import { either, isEmpty, isNil } from "ramda";
 
 import { getFromLocalStorage } from "utils/storage";

@@ -14,8 +14,7 @@ class OrganisationsController < ApplicationController
   end
 
   def create
-    organisation = Organisation.new(organisation_params)
-    organisation.save!
+    organisation = Organisation.create(organisation_params)
     respond_with_success(t("successfully_created", entity: "organisation"))
   end
 

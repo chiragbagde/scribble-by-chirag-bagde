@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-import { Button, ActionDropdown, Toastr } from "@bigbinary/neetoui";
-import { Input, Textarea, Select } from "@bigbinary/neetoui/formik";
 import { Formik, Form as FormikForm } from "formik";
+import { Button, ActionDropdown, Toastr } from "neetoui";
+import { Input, Textarea, Select } from "neetoui/formik";
 
 import articlesApi from "apis/articles";
-import CategoriesApi from "apis/categories";
+import categoriesApi from "apis/categories";
 import PageLoader from "components/PageLoader";
 
 import { ARTICLES_FORM_VALIDATION_SCHEMA, STATUS } from "../constants";
@@ -16,27 +16,35 @@ const Form = ({ history, isEdit, article }) => {
   const [submitted, setSubmitted] = useState(false);
   const [categoriesList, setCategoriesList] = useState([]);
   const [changeCategory, setChangeCategory] = useState({
-    value: null,
+    value: "",
     label: "",
   });
   const [loading, setLoading] = useState(false);
+  const [categoryId, setCategoryId] = useState(null);
 
   const refetch = async () => await articlesApi.list();
+
   function handleStatus(values, item) {
     values.status = item;
-    handleSubmit(values);
     setSubmitted(true);
+    handleSubmit(values);
   }
 
   const fetchCategories = async () => {
     try {
       const {
         data: { categories },
-      } = await CategoriesApi.list();
+      } = await categoriesApi.list();
       const category = categories.map(category => ({
         value: category.id,
         label: category.category,
       }));
+      if (isEdit) {
+        const matchingCategory = categories.map(
+          ({ id }) => id === article.assigned_category_id
+        );
+        setCategoryId(matchingCategory.indexOf(true));
+      }
       setCategoriesList(category);
       setLoading(false);
     } catch (error) {
@@ -89,7 +97,7 @@ const Form = ({ history, isEdit, article }) => {
       initialValues={article}
       validateOnBlur={submitted}
       validateOnChange={submitted}
-      validationSchema={ARTICLES_FORM_VALIDATION_SCHEMA}
+      validationSchema={ARTICLES_FORM_VALIDATION_SCHEMA(categoriesList)}
       onSubmit={handleSubmit}
     >
       {({ isSubmitting, values }) => (
@@ -112,7 +120,7 @@ const Form = ({ history, isEdit, article }) => {
               placeholder="Select Category."
               value={
                 (changeCategory.value && changeCategory) ||
-                categoriesList[article.assigned_category_id - 1]
+                categoriesList[categoryId]
               }
               onChange={e =>
                 setChangeCategory({
@@ -150,6 +158,7 @@ const Form = ({ history, isEdit, article }) => {
             size="large"
             style="text"
             type="reset"
+            onClick={() => history.push("/")}
           />
         </FormikForm>
       )}

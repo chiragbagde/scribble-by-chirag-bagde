@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { MenuBar } from "@bigbinary/neetoui/layouts";
+import { MenuBar } from "neetoui/layouts";
 import { useParams } from "react-router-dom";
 
 import { MENU_ITEMS } from "./constants";

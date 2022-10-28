@@ -1,10 +1,11 @@
 import React from "react";
 
-import { Check } from "@bigbinary/neeto-icons";
-import { Input } from "@bigbinary/neetoui/formik";
 import { Formik, Form } from "formik";
+import { Check } from "neetoicons";
+import { Toastr } from "neetoui";
+import { Input } from "neetoui/formik";
 
-import CategoriesApi from "apis/categories";
+import categoriesApi from "apis/categories";
 
 const CreateCategories = ({
   fetchCategories,
@@ -14,9 +15,10 @@ const CreateCategories = ({
 }) => {
   const handleSubmit = async values => {
     try {
-      await CategoriesApi.create({ category: values.category, order: length });
+      await categoriesApi.create({ category: values.category, order: length });
       setCreateCategory(!createCategory);
       fetchCategories();
+      Toastr.success("Category updated successfully.");
     } catch (error) {
       logger.error(error);
     }

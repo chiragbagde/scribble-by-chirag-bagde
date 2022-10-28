@@ -9,4 +9,5 @@ class Organisation < ApplicationRecord
 
   validates :password, length: { minimum: 6 },
     if: -> { password.present? }
+  validates :site_name, presence: true
 end

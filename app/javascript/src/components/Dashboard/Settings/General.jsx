@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-import { Check, Close } from "@bigbinary/neeto-icons";
-import { Typography, Checkbox, Button, Toastr } from "@bigbinary/neetoui";
-import { Input } from "@bigbinary/neetoui/formik";
 import { Formik, Form } from "formik";
+import { Check, Close } from "neetoicons";
+import { Typography, Checkbox, Button, Toastr } from "neetoui";
+import { Input } from "neetoui/formik";
 
-import authApi from "apis/auth";
+import organisationsApi from "apis/organisations";
 import PageLoader from "components/PageLoader";
 import { deleteFromLocalStorage, setToLocalStorage } from "utils/storage";
 
@@ -37,7 +37,7 @@ const General = ({ status, setStatus }) => {
     try {
       const {
         data: { organisations },
-      } = await authApi.fetchOrganisationDetails();
+      } = await organisationsApi.fetch();
       setOrganisation(organisations[0]);
       setStatus(organisations[0].status === "checked");
       setChecked(organisations[0].status === "checked");
@@ -107,7 +107,7 @@ const General = ({ status, setStatus }) => {
     const obj = updateEntries(values);
     try {
       if (obj.validateEntry || checkPassword) {
-        await authApi.update(obj.updateEntries, organisation.id);
+        await organisationsApi.update(obj.updateEntries, organisation.id);
         Toastr.success("Settings updated Successfully");
       } else {
         Toastr.warning("Please update the values with valid checks");

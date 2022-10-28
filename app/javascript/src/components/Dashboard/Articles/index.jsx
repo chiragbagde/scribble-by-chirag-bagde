@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-import { Container } from "@bigbinary/neetoui/layouts";
+import { Container } from "neetoui/layouts";
 
-import ArticlesApi from "apis/articles";
+import articlesApi from "apis/articles";
 import PageLoader from "components/PageLoader";
 
 import DeleteAlert from "./Article/DeleteAlert";
+import { FILTERING_OPTIONS } from "./constants";
 import Header from "./Header";
 import SideBar from "./SideBar";
 import Table from "./Table";
@@ -13,18 +14,18 @@ import Table from "./Table";
 const Articles = ({ history }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [columns, setColumns] = useState([]);
+  const [columns, setColumns] = useState(FILTERING_OPTIONS);
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [deleteSlug, setDeleteSlug] = useState("");
+  const [deleteId, setDeleteId] = useState("");
   const [title, setTitle] = useState("");
 
   const fetchArticles = async () => {
     try {
       const {
         data: { articles },
-      } = await ArticlesApi.list();
+      } = await articlesApi.list();
       setArticles(articles);
       setFilteredArticles(articles);
       setLoading(false);
@@ -34,29 +35,17 @@ const Articles = ({ history }) => {
     }
   };
 
-  const handleSearch = (e, searchTerm) => {
-    if (e.key === "Enter") {
-      const updatedArticles = articles.filter(
-        ({ title }) =>
-          title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
-      );
-      searchTerm !== ""
-        ? setFilteredArticles(updatedArticles)
-        : setFilteredArticles(articles);
-    }
-  };
-
-  const destroyArticle = async slug => {
+  const destroyArticle = async id => {
     try {
-      await ArticlesApi.destroy(slug);
+      await articlesApi.destroy(id);
       await fetchArticles();
     } catch (error) {
       logger.error(error);
     }
   };
 
-  const handleDelete = (slug, title) => {
-    setDeleteSlug(slug);
+  const handleDelete = (id, title) => {
+    setDeleteId(id);
     setTitle(title);
     setShowDeleteAlert(true);
   };
@@ -83,10 +72,10 @@ const Articles = ({ history }) => {
       <Container>
         <Header
           columns={columns}
-          handleSearch={handleSearch}
           history={history}
           searchTerm={searchTerm}
           setColumns={setColumns}
+          setFilteredArticles={setFilteredArticles}
           setSearchTerm={setSearchTerm}
         />
         <Table
@@ -98,7 +87,7 @@ const Articles = ({ history }) => {
         {showDeleteAlert && articles.length > 1 && (
           <DeleteAlert
             destroyArticle={destroyArticle}
-            slug={deleteSlug}
+            id={deleteId}
             title={title}
             onClose={() => setShowDeleteAlert(false)}
           />

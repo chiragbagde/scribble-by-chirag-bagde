@@ -8,6 +8,6 @@ const update = (payload, id) => {
   });
 };
 
-const OptionsApi = { list, update };
+const optionsApi = { list, update };
 
-export default OptionsApi;
+export default optionsApi;

@@ -2,6 +2,8 @@ import axios from "axios";
 
 const list = () => axios.get("/categories");
 
+const filter = params => axios.get("/categories/filter", { params });
+
 const create = payload =>
   axios.post("/categories", {
     category: payload,
@@ -13,7 +15,7 @@ const update = (payload, id) => {
   });
 };
 
-const update_two = (positions, id) => {
+const updatePosition = (positions, id) => {
   axios.put(`/categories/${id}/update_order`, {
     category: { positions, id },
   });
@@ -21,6 +23,6 @@ const update_two = (positions, id) => {
 
 const destroy = id => axios.delete(`/categories/${id}`);
 
-const CategoriesApi = { list, create, update, destroy, update_two };
+const categoriesApi = { list, create, update, destroy, updatePosition, filter };
 
-export default CategoriesApi;
+export default categoriesApi;

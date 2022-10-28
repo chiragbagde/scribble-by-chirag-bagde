@@ -4,9 +4,8 @@ module Filterable
   extend ActiveSupport::Concern
 
   module ClassMethods
-    def filter_columns
-      column_params = Option.first.columns
-      articles = Article.select(column_params)
+    def filter_columns(filtering_params)
+      articles = Article.select(filtering_params[:columns])
     end
 
     def filter_status(filtering_params)
@@ -19,7 +18,11 @@ module Filterable
     end
 
     def filter(filtering_params)
-      articles = Article.where("title LIKE ?", "#{filtering_params[:title]}%")
+      if filtering_params[:title]
+        articles = Article.where("title LIKE ?", "%#{filtering_params[:title]}%%")
+      else
+        categories = Category.where("category LIKE ?", "%#{filtering_params[:category]}%%")
+      end
     end
   end
 end

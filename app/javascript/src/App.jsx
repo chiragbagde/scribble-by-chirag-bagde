@@ -51,7 +51,11 @@ const App = () => {
   return (
     <Router>
       <ToastContainer />
-      <NavBar />
+      <Route
+        exact
+        component={NavBar}
+        path={["/", "/articles/*", "/settings/*"]}
+      />
       <Switch history={history}>
         {redirections.map(({ old_url, new_url, id }) => (
           <Route exact from={`/${old_url}`} key={id}>
@@ -68,7 +72,7 @@ const App = () => {
           )}
         />
         <Route exact component={Create} path="/articles/create" />
-        <Route exact component={Edit} path="/articles/:slug/edit" />
+        <Route exact component={Edit} path="/articles/:id/edit" />
         <Route exact component={Eui} path="/public/*" />
         <Route exact component={Dashboard} history={history} path="/" />
         <Redirect from="/settings" to="/settings/" />

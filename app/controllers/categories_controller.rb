@@ -45,6 +45,11 @@ class CategoriesController < ApplicationController
     respond_with_success(t("successfully_updated", entity: "Category"))
   end
 
+  def filter
+    categories = Category.filter(params.permit(:category))
+    respond_with_json({ categories: categories })
+  end
+
   private
 
     def load_category!

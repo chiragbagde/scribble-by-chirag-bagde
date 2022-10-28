@@ -39,14 +39,6 @@ ActiveRecord::Schema.define(version: 2022_10_26_044834) do
     t.integer "assigned_organisation_id"
   end
 
-  create_table "options", force: :cascade do |t|
-    t.string "columns", default: [], array: true
-    t.string "status"
-    t.string "categories", default: [], array: true
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "organisations", force: :cascade do |t|
     t.string "password_digest", null: false
     t.string "site_name"

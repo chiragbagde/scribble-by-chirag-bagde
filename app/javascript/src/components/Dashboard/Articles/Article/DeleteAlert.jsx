@@ -1,10 +1,10 @@
 import React from "react";
 
-import { Alert, Toastr } from "@bigbinary/neetoui";
+import { Alert, Toastr } from "neetoui";
 
-const DeleteAlert = ({ onClose, slug, destroyArticle, title }) => {
+const DeleteAlert = ({ onClose, id, destroyArticle, title }) => {
   const handleDelete = () => {
-    destroyArticle(slug);
+    destroyArticle(id);
     onClose();
     Toastr.success("Article is deleted successfully.");
   };
@@ -12,7 +12,7 @@ const DeleteAlert = ({ onClose, slug, destroyArticle, title }) => {
   return (
     <Alert
       isOpen
-      message={`Are you sure you want to continue deleting ${title}? This cannot be undone.`}
+      message={`Are you sure you want to continue deleting this ${title}? This cannot be undone.`}
       title="Delete Article"
       onClose={onClose}
       onSubmit={handleDelete}

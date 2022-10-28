@@ -9,7 +9,7 @@ import {
 } from "react-pro-sidebar";
 import { Switch, Route, useParams } from "react-router-dom";
 
-import CategoriesApi from "apis/categories";
+import categoriesApi from "apis/categories";
 import PageLoader from "components/PageLoader";
 
 import Detail from "./Detail";
@@ -28,7 +28,7 @@ const SideMenu = ({ history }) => {
     setTitle(title);
     setDescription(description);
     setCreatedAt(created_at);
-    setActive(title);
+    setActive(slug);
     setCategory(category);
     setSlug(slug);
     history.push(`/public/${category}/${slug}`);
@@ -41,7 +41,7 @@ const SideMenu = ({ history }) => {
     try {
       const {
         data: { categories },
-      } = await CategoriesApi.list();
+      } = await categoriesApi.list();
       setCategories(categories.sort((a, b) => (a.order > b.order ? 1 : -1)));
       setLoading(false);
       if (params[0] === "") {
@@ -72,7 +72,7 @@ const SideMenu = ({ history }) => {
       setDescription(paramsArticle.description);
       setCreatedAt(paramsArticle.created_at);
       setCategory(categoryData[0]["category"]);
-      setActive(paramsArticle.title);
+      setActive(paramsArticle.slug);
     }
   }, [categories]);
 
@@ -99,7 +99,7 @@ const SideMenu = ({ history }) => {
                   ({ slug, title, description, created_at }, idx) =>
                     slug && (
                       <MenuItem
-                        className={`${active === title && "text-indigo-600"}`}
+                        className={`${active === slug && "text-indigo-600"}`}
                         key={idx}
                         active={
                           category["category"] === paramsCategory &&
@@ -130,6 +130,7 @@ const SideMenu = ({ history }) => {
                 category={category}
                 created_at={createdAt}
                 description={description}
+                history={history}
                 title={title}
               />
             )}

@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-import { Button, Checkbox, Dropdown } from "@bigbinary/neetoui";
-import { Header as NeetoUIHeader } from "@bigbinary/neetoui/layouts";
+import { Button, Checkbox, Dropdown } from "neetoui";
+import { Header as NeetoUIHeader } from "neetoui/layouts";
 
-import OptionsApi from "apis/options";
-import PageLoader from "components/PageLoader";
+import articlesApi from "apis/articles";
 
-import { filteringOptions } from "./constants";
+import { FILTERING_OPTIONS } from "./constants";
 
 const { Menu, MenuItem } = Dropdown;
 
@@ -14,26 +13,31 @@ const Header = ({
   history,
   searchTerm,
   setSearchTerm,
-  handleSearch,
   columns,
   setColumns,
+  setFilteredArticles,
 }) => {
-  const [loading, setLoading] = useState(true);
   const [checked, setChecked] = useState(
-    Array(filteringOptions.length).fill(true)
+    Array(FILTERING_OPTIONS.length).fill(true)
   );
 
   const handleClick = async () => {
-    const newChecked = filteringOptions.map(option => columns.includes(option));
+    const newChecked = FILTERING_OPTIONS.map(option =>
+      columns.includes(option)
+    );
     setChecked(newChecked);
   };
 
-  const handleUpdate = async updated_columns => {
+  const handleSearchTerm = async (e, searchTerm) => {
     try {
-      await OptionsApi.update({ columns: updated_columns }, 1);
+      if (e.key === "Enter") {
+        const {
+          data: { articles },
+        } = await articlesApi.filter({ title: searchTerm });
+        setFilteredArticles(articles);
+      }
     } catch (error) {
       logger.error(error);
-      setLoading(false);
     }
   };
 
@@ -46,34 +50,7 @@ const Header = ({
       updated_columns.push(column);
     }
     setColumns(updated_columns);
-    setLoading(false);
-    await handleUpdate(updated_columns);
   };
-
-  const fetchColumns = async () => {
-    try {
-      const {
-        data: { options },
-      } = await OptionsApi.list();
-      setColumns(options[0]["columns"]);
-      setLoading(false);
-    } catch (error) {
-      logger.error(error);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchColumns();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="h-screen w-screen">
-        <PageLoader />
-      </div>
-    );
-  }
 
   return (
     <NeetoUIHeader
@@ -85,7 +62,7 @@ const Header = ({
             onClick={handleClick}
           >
             <Menu>
-              {filteringOptions.map((item, idx) => (
+              {FILTERING_OPTIONS.map((item, idx) => (
                 <MenuItem.Button
                   key={idx}
                   prefix={
@@ -112,8 +89,8 @@ const Header = ({
       searchProps={{
         value: searchTerm,
         onChange: e => setSearchTerm(e.target.value),
-        onKeyDown: e => handleSearch(e, searchTerm),
-        placeholder: "Search for Title",
+        onKeyDown: e => handleSearchTerm(e, searchTerm),
+        placeholder: "Search for Title and press Enter",
       }}
     />
   );

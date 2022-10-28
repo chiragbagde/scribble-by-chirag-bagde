@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import { Delete, Edit, Reorder, Plus } from "@bigbinary/neeto-icons";
-import { Typography, Toastr } from "@bigbinary/neetoui";
-import { Input } from "@bigbinary/neetoui/formik";
 import { Formik, Form } from "formik";
+import { Delete, Edit, Reorder, Plus } from "neetoicons";
+import { Typography, Toastr } from "neetoui";
+import { Input } from "neetoui/formik";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-import CategoriesApi from "apis/categories";
+import categoriesApi from "apis/categories";
 import PageLoader from "components/PageLoader";
 
 import CreateCategories from "./CreateCategories";
@@ -23,7 +23,7 @@ const ManageCategories = () => {
     try {
       const {
         data: { categories },
-      } = await CategoriesApi.list();
+      } = await categoriesApi.list();
       setCategories(categories);
       setLoading(false);
     } catch (error) {
@@ -36,7 +36,7 @@ const ManageCategories = () => {
   const handleSubmit = async values => {
     try {
       setOrderUpdated(true);
-      await CategoriesApi.update({ ...values }, showId);
+      await categoriesApi.update({ ...values }, showId);
       Toastr.success("Category updated successfully.");
     } catch (error) {
       logger.error(error);
@@ -46,9 +46,9 @@ const ManageCategories = () => {
     setShowInput(false);
   };
 
-  const handle_update_two = async (positions, reorderedItem) => {
+  const handle_updatePosition = async (positions, reorderedItem) => {
     try {
-      await CategoriesApi.update_two(positions, reorderedItem.id);
+      await categoriesApi.updatePosition(positions, reorderedItem.id);
     } catch (error) {
       logger.error(error);
       setLoading(false);
@@ -61,12 +61,12 @@ const ManageCategories = () => {
     items.splice(result.destination.index, 0, reorderedItem);
     const positions = items.map(({ id }) => id);
     setCategories(items);
-    handle_update_two(positions, reorderedItem);
+    handle_updatePosition(positions, reorderedItem);
   };
 
   const handleDelete = async id => {
     try {
-      await CategoriesApi.destroy(id);
+      await categoriesApi.destroy(id);
       Toastr.success("Category deleted successfully.");
     } catch (error) {
       logger.error(error);

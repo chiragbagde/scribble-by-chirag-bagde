@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-import { Delete, Edit, Plus, Check } from "@bigbinary/neeto-icons";
-import { Typography, Toastr, Input } from "@bigbinary/neetoui";
+import { Delete, Edit, Plus, Check } from "neetoicons";
+import { Typography, Toastr, Input } from "neetoui";
 
 import RedirectionsApi from "apis/redirections";
 import PageLoader from "components/PageLoader";
