@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+import { Typography } from "neetoui";
 import { Container } from "neetoui/layouts";
 
 import articlesApi from "apis/articles";
@@ -78,6 +79,9 @@ const Articles = ({ history }) => {
           setFilteredArticles={setFilteredArticles}
           setSearchTerm={setSearchTerm}
         />
+        <Typography style="h4" weight="bold">
+          {filteredArticles.length} Articles
+        </Typography>
         <Table
           columns={columns}
           data={filteredArticles}
