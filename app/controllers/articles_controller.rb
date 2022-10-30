@@ -37,11 +37,6 @@ class ArticlesController < ApplicationController
     respond_with_json({ articles: articles })
   end
 
-  def filter_columns
-    articles = Article.filter_columns(params.permit(columns: []))
-    respond_with_json({ articles: articles })
-  end
-
   def filter
     articles = Article.filter(params.permit(:title))
     articles = articles.all.as_json(include: { assigned_category: { only: %i[category id] } })

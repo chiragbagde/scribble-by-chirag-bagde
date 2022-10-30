@@ -17,7 +17,7 @@ const CreateCategories = ({
     try {
       await categoriesApi.create({ category: values.category, order: length });
       setCreateCategory(!createCategory);
-      fetchCategories();
+      await fetchCategories();
       Toastr.success("Category created successfully.");
     } catch (error) {
       logger.error(error);
@@ -31,7 +31,7 @@ const CreateCategories = ({
           <Input
             className="my-6 h-8 w-64"
             name="category"
-            placeholder="Enabling 2FA"
+            placeholder="Type category and press enter"
             suffix={<Check />}
           />
         </Form>

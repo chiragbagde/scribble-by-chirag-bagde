@@ -8,17 +8,13 @@ Rails.application.routes.draw do
     get "filter", on: :collection
   end
   resources :redirections, except: %i[new edit]
-  resources :organisations do
-    member do
-      put :update_status
-    end
-  end
+  resource :organisation
+
   resources :categories do
     get "filter", on: :collection
-    member do
-      put :update_order
-    end
+    put "update_order", on: :collection
   end
+
   resource :session, only: :create
   resources :options
 
