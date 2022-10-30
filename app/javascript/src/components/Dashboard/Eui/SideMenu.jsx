@@ -74,7 +74,7 @@ const SideMenu = ({ history }) => {
       setCategory(categoryData[0]["category"]);
       setActive(paramsArticle.slug);
     }
-  }, [categories]);
+  }, [categories, paramsCategory, paramsSlug, loading]);
 
   if (loading) {
     return (

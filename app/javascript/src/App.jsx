@@ -75,7 +75,6 @@ const App = () => {
         <Route exact component={Edit} path="/articles/:id/edit" />
         <Route exact component={Eui} path="/public/*" />
         <Route exact component={Dashboard} history={history} path="/" />
-        {/* <Redirect from="/settings" to="/settings/" /> */}
         <Redirect from="/public" to="/public/" />
       </Switch>
     </Router>

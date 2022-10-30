@@ -1,31 +1,19 @@
 import axios from "axios";
 
-const signup = payload =>
-  axios.post("/organisations", {
-    organisation: payload,
-  });
-
 const login = payload =>
   axios.post("/session", {
     login: payload,
   });
 
-const fetch = () => axios.get("/organisations");
+const fetch = () => axios.get("/organisation");
 
-const updateStatus = (payload, id) =>
-  axios.put(`/organisations/${id}/update_status`, {
-    organisation: payload,
-  });
-
-const update = (payload, id) =>
-  axios.put(`/organisations/${id}`, {
+const update = payload =>
+  axios.put(`/organisation`, {
     organisation: payload,
   });
 
 const organisationsApi = {
   login,
-  updateStatus,
-  signup,
   update,
   fetch,
 };

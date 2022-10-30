@@ -4,10 +4,6 @@ module Filterable
   extend ActiveSupport::Concern
 
   module ClassMethods
-    def filter_columns(filtering_params)
-      articles = Article.select(filtering_params[:columns])
-    end
-
     def filter_status(filtering_params)
       articles = Article.where({ status: filtering_params[:status] })
     end

@@ -61,8 +61,8 @@ const Redirections = () => {
   const handleCreateRedirection = () => {
     setCreateRedirection(!createRedirection);
     setUpdateRedirections(true);
-    setOldUrl("");
-    setNewUrl("");
+    setOldUrl("/1");
+    setNewUrl("/2");
   };
 
   const handleUpdateRedirection = async () => {
@@ -122,7 +122,7 @@ const Redirections = () => {
               {showInput && showId === id ? (
                 <>
                   <div className="flex-col">
-                    <span>{`localhost:3000/${old_url}`}</span>
+                    <span>{`localhost:3000${old_url}`}</span>
                     <Input
                       className="mt-2"
                       value={oldUrl}
@@ -130,7 +130,7 @@ const Redirections = () => {
                     />
                   </div>
                   <div className="flex-col">
-                    <span>{`localhost:3000/${new_url}`}</span>
+                    <span>{`localhost:3000${new_url}`}</span>
                     <Input
                       className="mt-2"
                       placeholder={new_url}
@@ -144,8 +144,8 @@ const Redirections = () => {
                 </>
               ) : (
                 <>
-                  <span>{`localhost:3000/${old_url}`}</span>
-                  <span>{`localhost:3000/${new_url}`}</span>
+                  <span>{`localhost:3000${old_url}`}</span>
+                  <span>{`localhost:3000${new_url}`}</span>
                 </>
               )}
               <span className="flex justify-center">

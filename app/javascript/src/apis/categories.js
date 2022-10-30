@@ -15,9 +15,9 @@ const update = (payload, id) => {
   });
 };
 
-const updatePosition = (positions, id) => {
-  axios.put(`/categories/${id}/update_order`, {
-    category: { positions, id },
+const updatePosition = positions => {
+  axios.put(`/categories/update_order`, {
+    category: { positions },
   });
 };
 

@@ -38,9 +38,9 @@ const General = ({ status, setStatus }) => {
       const {
         data: { organisations },
       } = await organisationsApi.fetch();
-      setOrganisation(organisations[0]);
-      setStatus(organisations[0].status === "checked");
-      setChecked(organisations[0].status === "checked");
+      setOrganisation(organisations);
+      setStatus(organisations.status === "checked");
+      setChecked(organisations.status === "checked");
       setLoading(false);
     } catch (error) {
       logger.error(error);
@@ -107,7 +107,7 @@ const General = ({ status, setStatus }) => {
     const obj = updateEntries(values);
     try {
       if (obj.validateEntry || checkPassword) {
-        await organisationsApi.update(obj.updateEntries, organisation.id);
+        await organisationsApi.update(obj.updateEntries);
         Toastr.success("Settings updated Successfully");
       } else {
         Toastr.warning("Please update the values with valid checks");

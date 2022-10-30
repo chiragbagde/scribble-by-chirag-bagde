@@ -14,7 +14,7 @@ const { Menu, MenuItem } = ActionDropdown;
 
 const Form = ({ history, isEdit, article }) => {
   const [submitted, setSubmitted] = useState(false);
-  const [categoriesList, setCategoriesList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
   const [changeCategory, setChangeCategory] = useState({
     value: "",
     label: "",
@@ -37,7 +37,7 @@ const Form = ({ history, isEdit, article }) => {
       );
       const matchingId = matchingCategory.indexOf(true);
       setChangeCategory({
-        value: matchingId,
+        value: categories[matchingId].id,
         label: categories[matchingId].category,
       });
       setCategoryId(matchingId);
@@ -54,7 +54,7 @@ const Form = ({ history, isEdit, article }) => {
         label: category.category,
       }));
       handleInitialEdit(categories);
-      setCategoriesList(category);
+      setCategoryList(category);
     } catch (error) {
       logger.error(error);
     }
@@ -105,7 +105,7 @@ const Form = ({ history, isEdit, article }) => {
       initialValues={article}
       validateOnBlur={submitted}
       validateOnChange={submitted}
-      validationSchema={ARTICLES_FORM_VALIDATION_SCHEMA(categoriesList)}
+      validationSchema={ARTICLES_FORM_VALIDATION_SCHEMA(categoryList)}
       onSubmit={handleSubmit}
     >
       {({ isSubmitting, values }) => (
@@ -124,11 +124,11 @@ const Form = ({ history, isEdit, article }) => {
               className="w-full flex-grow-0"
               label="Category"
               name="category"
-              options={categoriesList}
+              options={categoryList}
               placeholder="Select Category."
               value={
                 (changeCategory.value && changeCategory) ||
-                categoriesList[categoryId]
+                categoryList[categoryId]
               }
               onChange={e =>
                 setChangeCategory({

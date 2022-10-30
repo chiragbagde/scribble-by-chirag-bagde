@@ -17,7 +17,7 @@ const ManageCategories = () => {
   const [loading, setLoading] = useState(true);
   const [showInput, setShowInput] = useState(false);
   const [showId, setShowId] = useState(0);
-  const [orderUpdated, setOrderUpdated] = useState(false);
+  const [categoryUpdated, setCategoryUpdated] = useState(false);
 
   const fetchCategories = async () => {
     try {
@@ -30,25 +30,24 @@ const ManageCategories = () => {
       logger.error(error);
       setLoading(false);
     }
-    setOrderUpdated(false);
+    setCategoryUpdated(false);
   };
 
   const handleSubmit = async values => {
     try {
-      setOrderUpdated(true);
+      setCategoryUpdated(true);
       await categoriesApi.update({ ...values }, showId);
       Toastr.success("Category updated successfully.");
     } catch (error) {
       logger.error(error);
       setLoading(false);
     }
-    await fetchCategories();
     setShowInput(false);
   };
 
-  const handle_updatePosition = async (positions, reorderedItem) => {
+  const handleUpdatePosition = async positions => {
     try {
-      await categoriesApi.updatePosition(positions, reorderedItem.id);
+      await categoriesApi.updatePosition(positions);
     } catch (error) {
       logger.error(error);
       setLoading(false);
@@ -61,7 +60,7 @@ const ManageCategories = () => {
     items.splice(result.destination.index, 0, reorderedItem);
     const positions = items.map(({ id }) => id);
     setCategories(items);
-    handle_updatePosition(positions, reorderedItem);
+    handleUpdatePosition(positions);
   };
 
   const handleDelete = async id => {
@@ -78,7 +77,7 @@ const ManageCategories = () => {
 
   useEffect(() => {
     fetchCategories();
-  }, [orderUpdated]);
+  }, [categoryUpdated]);
 
   if (loading) {
     return (

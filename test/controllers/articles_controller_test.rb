@@ -9,6 +9,76 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     @article = create(:article, assigned_category_id: @category.id, assigned_organisation_id: @organisation.id)
   end
 
+  def test_should_list_all_articles
+    get articles_path
+    assert_response :success
+    response_json = response.parsed_body
+    assert_equal response_json["articles"].length, Article.count
+  end
+
+  def test_should_create_valid_article
+    post articles_path,
+      params: {
+        article: {
+          title: "Learn Ruby", assigned_category_id: @category.id,
+          assigned_organisation_id: @organisation.id
+        }
+      }
+    assert_response :success
+    response_json = response.parsed_body
+    assert_equal response_json["notice"], t("successfully_created", entity: "Article")
+  end
+
+  def test_filter_article_status
+    article1 = create(:article, assigned_category_id: @category.id, assigned_organisation_id: @organisation.id)
+    article1.status = "Draft"
+    article1.save!
+    get "/articles/filter_status", params: { status: "Draft" }
+    assert_response :success
+
+    response_json = response.parsed_body
+    assert_equal response_json["articles"].length, 1
+  end
+
+  def test_search_article_title
+    article1 = create(:article, assigned_category_id: @category.id, assigned_organisation_id: @organisation.id)
+    article1.title = "Scribble"
+    article1.save!
+    get "/articles/filter", params: { title: "Scribble" }
+    assert_response :success
+
+    response_json = response.parsed_body
+    assert_equal response_json["articles"].length, 1
+  end
+
+  def test_filter_article_by_category
+    category1 = create(:category, assigned_organisation_id: @organisation.id)
+    category1.category = "Apps"
+    category1.save!
+    article1 = create(:article, assigned_category_id: category1.id, assigned_organisation_id: @organisation.id)
+    get "/articles/filter_by_category", params: { category: ["Apps"] }
+    assert_response :success
+
+    response_json = response.parsed_body
+    assert_equal response_json["articles"].length, 1
+  end
+
+  def test_creator_can_update_any_article_fields
+    new_title = "ScribbleUpdated"
+    article_params = {
+      article: {
+        title: new_title, assigned_category_id: @category.id,
+        assigned_organisation_id: @organisation.id
+      }
+    }
+
+    put article_path(@article.id), params: article_params
+    assert_response :success
+    @article.reload
+    assert_equal @article.title, new_title
+    assert_equal @article.assigned_category_id, @category.id
+  end
+
   def test_article_should_not_be_valid_without_title
     @article.title = ""
     assert_not @article.valid?
@@ -37,12 +107,6 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     @article.slug = ""
     assert_not @article.valid?
   end
-
-  def test_can_update_article
-    updated_title = "Updated"
-    article_params = { article: { title: updated_title } }
-    put article_path(@article.slug), params: article_params
- end
 
   def test_should_destroy_category
     assert_difference "Article.count", -1 do

@@ -17,7 +17,7 @@ const Authenticate = ({ history }) => {
       const {
         data: { organisations },
       } = await organisationsApi.fetch();
-      setSiteName(organisations[0]["site_name"]);
+      setSiteName(organisations["site_name"]);
       setLoading(false);
     } catch (error) {
       logger.error(error);

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CategoriesController < ApplicationController
-  before_action :load_category!, only: %i[ update destroy show]
+  before_action :load_category!, only: %i[ update destroy]
   before_action :current_organisation
 
   def index
@@ -13,10 +13,6 @@ class CategoriesController < ApplicationController
         }
       })
     respond_with_json({ categories: categories })
-  end
-
-  def show
-    respond_with_json({ category: @category, assigned_articles: @category.assigned_articles })
   end
 
   def create
@@ -35,7 +31,6 @@ class CategoriesController < ApplicationController
   end
 
   def update_order
-    categories = Category.all
     params.require(:category).permit!
     params[:category][:positions].each_with_index do |list_item, index|
       order = Category.find_by!(id: list_item)

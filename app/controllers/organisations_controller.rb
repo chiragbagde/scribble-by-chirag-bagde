@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
 class OrganisationsController < ApplicationController
-  before_action :load_category!, only: %i[update update_status]
-
-  def index
-    organisations = Organisation.all
-    organisations = Organisation.all.as_json(
+  def show
+    organisations = Organisation.first.as_json(
       include: {
         assigned_articles: { only: %i[title description created_at] },
         assigned_categories: { only: %i[category order] }, assigned_redirections: { only: %i[old_url new_url] }
@@ -19,15 +16,12 @@ class OrganisationsController < ApplicationController
   end
 
   def update
-    @organisation.update!(organisation_params)
+    organisation = Organisation.first
+    organisation.update!(organisation_params)
     respond_with_success(t("successfully_updated", entity: "organisation"))
   end
 
   private
-
-    def load_category!
-      @organisation = Organisation.find_by!(id: params[:id])
-    end
 
     def organisation_params
       params.require(:organisation).permit(:site_name, :password, :status)
