@@ -12,10 +12,10 @@ export const articlesTableColumnData = (history, handleDelete, columns) =>
       key: "title",
       width: "25%",
       className: "text-indigo-500",
-      render: (title, { assigned_category, slug }) => (
+      render: (title, { assigned_category }) => (
         <span
           onClick={() =>
-            history.push(`/public/${assigned_category.category}/${slug}`)
+            history.push(`/public/${assigned_category.category}/${title}`)
           }
         >
           {title}

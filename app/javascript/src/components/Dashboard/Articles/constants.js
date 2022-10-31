@@ -1,3 +1,4 @@
+import { buildSelectOptions } from "utils";
 import * as yup from "yup";
 
 export const ARTICLES_FORM_INITIAL_FORM_VALUES = {
@@ -8,6 +9,12 @@ export const ARTICLES_FORM_INITIAL_FORM_VALUES = {
     label: "",
   },
 };
+
+export const CATEGORIES = buildSelectOptions([
+  "Misc",
+  "Getting Started",
+  "Security & Privacy",
+]);
 
 export const MENU_ITEMS = ["All", "Draft", "Published"];
 
