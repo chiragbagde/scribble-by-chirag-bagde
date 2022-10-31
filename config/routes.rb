@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     get "filter", on: :collection
   end
   resources :redirections, except: %i[new edit]
-  resource :organisation, only: %i[update show]
+  resource :organisation, except: %i[new edit index destroy]
 
   resources :categories do
     get "filter", on: :collection
