@@ -31,7 +31,6 @@ class ArticlesController < ApplicationController
   end
 
   def filter_by_category
-    params.permit!
     articles = Article.filter_by_category(params.permit(category: []))
     articles = articles.all.as_json(include: { assigned_category: { only: %i[category id] } })
     respond_with_json({ articles: articles })
