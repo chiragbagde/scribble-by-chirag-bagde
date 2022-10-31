@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     get "filter", on: :collection
   end
   resources :redirections, except: %i[new edit]
-  resource :organisation
+  resource :organisation, only: %i[update show]
 
   resources :categories do
     get "filter", on: :collection
@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   end
 
   resource :session, only: :create
-  resources :options
+  resources :users, only: :index
 
   root "home#index"
   get "*path", to: "home#index", via: :all
