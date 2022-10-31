@@ -5,6 +5,8 @@ const login = payload =>
     login: payload,
   });
 
+const fetchUser = () => axios.get("/users");
+
 const fetch = () => axios.get("/organisation");
 
 const update = payload =>
@@ -16,6 +18,7 @@ const organisationsApi = {
   login,
   update,
   fetch,
+  fetchUser,
 };
 
 export default organisationsApi;

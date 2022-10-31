@@ -34,7 +34,7 @@ def create_sample_organisation_data!
   puts "Seeding with sample user..."
   Organisation.create!(
     site_name: 'spinkart',
-    status: 'unchecked',
+    status: 'checked',
     password: 'welcome1'
   )
   puts "Done! site is created successfully."
