@@ -42,6 +42,7 @@ export const articlesTableColumnData = (history, handleDelete, columns) =>
       dataIndex: "author",
       key: "author",
       width: "20%",
+      render: author => author.name,
     },
     {
       title: "CATEGORY",

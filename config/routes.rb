@@ -1,22 +1,20 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  resources :articles, except: %i[new edit show] do
-    get "filter_columns", on: :collection
-    get "filter_by_category", on: :collection
-    get "filter_status", on: :collection
-    get "filter", on: :collection
-  end
+  namespace :api do
+  resources :articles, except: %i[new edit show]
+
   resources :redirections, except: %i[new edit]
   resource :organisation, except: %i[new edit index destroy]
+  resource :session, only: %i[create]
 
   resources :categories do
     get "filter", on: :collection
     put "update_order", on: :collection
   end
 
-  resource :session, only: :create
   resources :users, only: :index
+end
 
   root "home#index"
   get "*path", to: "home#index", via: :all

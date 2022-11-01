@@ -33,7 +33,7 @@ const Header = ({
       if (e.key === "Enter") {
         const {
           data: { articles },
-        } = await articlesApi.filter({ title: searchTerm });
+        } = await articlesApi.list({ title: searchTerm });
         setFilteredArticles(articles);
       }
     } catch (error) {

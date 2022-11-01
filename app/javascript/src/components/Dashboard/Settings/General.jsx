@@ -33,14 +33,14 @@ const General = ({ status, setStatus }) => {
     }
   };
 
-  const fetchUser = async () => {
+  const fetchOrganisation = async () => {
     try {
       const {
-        data: { organisations },
+        data: { organisation },
       } = await organisationsApi.fetch();
-      setOrganisation(organisations);
-      setStatus(organisations.status === "checked");
-      setChecked(organisations.status === "checked");
+      setOrganisation(organisation);
+      setStatus(organisation.status === "checked");
+      setChecked(organisation.status === "checked");
       setLoading(false);
     } catch (error) {
       logger.error(error);
@@ -119,7 +119,7 @@ const General = ({ status, setStatus }) => {
   };
 
   useEffect(() => {
-    fetchUser();
+    fetchOrganisation();
   }, [status]);
 
   if (loading) {

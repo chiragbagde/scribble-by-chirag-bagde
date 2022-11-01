@@ -6,7 +6,6 @@ import { Input, Textarea, Select } from "neetoui/formik";
 
 import articlesApi from "apis/articles";
 import categoriesApi from "apis/categories";
-import organisationsApi from "apis/organisations";
 import PageLoader from "components/PageLoader";
 
 import { ARTICLES_FORM_VALIDATION_SCHEMA, STATUS } from "../constants";
@@ -22,7 +21,6 @@ const Form = ({ history, isEdit, article }) => {
   });
   const [loading, setLoading] = useState(false);
   const [categoryId, setCategoryId] = useState(null);
-  const [user, setUser] = useState("");
 
   const refetch = async () => await articlesApi.list();
 
@@ -46,18 +44,6 @@ const Form = ({ history, isEdit, article }) => {
     }
   };
 
-  const fetchUsername = async () => {
-    try {
-      const {
-        data: { user },
-      } = await organisationsApi.fetchUser();
-      setUser(user.name);
-    } catch (error) {
-      logger.error(error);
-    }
-    setLoading(false);
-  };
-
   const fetchCategories = async () => {
     try {
       const {
@@ -76,7 +62,7 @@ const Form = ({ history, isEdit, article }) => {
   };
 
   useEffect(() => {
-    Promise.all([fetchCategories(), fetchUsername()]);
+    Promise.all([fetchCategories()]);
   }, []);
 
   const handleSubmit = async values => {
@@ -85,7 +71,6 @@ const Form = ({ history, isEdit, article }) => {
         await articlesApi.update(
           {
             ...values,
-            author: user,
             assigned_category_id: changeCategory.value,
           },
           values.id
@@ -95,7 +80,6 @@ const Form = ({ history, isEdit, article }) => {
         await articlesApi.create({
           ...values,
           assigned_category_id: changeCategory.value,
-          author: user,
         });
         Toastr.success("Article created successfully.");
       }

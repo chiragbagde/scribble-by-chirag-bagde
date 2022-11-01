@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Redirection < ApplicationRecord
-  belongs_to :assigned_organisation, foreign_key: :assigned_organisation_id, class_name: "Organisation"
-
   validate :check_redirection_loop, on: [:create, :update]
   validate :old_url_and_new_url_not_equal, on: [:create, :update]
   validates :old_url, uniqueness: true, presence: true

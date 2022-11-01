@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-class SessionsController < ApplicationController
+class Api::SessionsController < ApplicationController
+  before_action :current_organisation
+
   def create
-    @organisation = Organisation.find_by!(site_name: login_params[:site_name])
-    unless @organisation.authenticate(login_params[:password])
+    unless @current_organisation.authenticate(login_params[:password])
       respond_with_error("Incorrect credentials, try again.", :unauthorized)
     end
   end

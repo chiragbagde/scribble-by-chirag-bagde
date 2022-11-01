@@ -1,28 +1,21 @@
 # frozen_string_literal: true
 
-class CategoriesController < ApplicationController
+class Api::CategoriesController < ApplicationController
   before_action :load_category!, only: %i[ update destroy]
-  before_action :current_organisation
+  before_action :current_user
 
   def index
-    categories = Category.all.order(:order).as_json(
-      include: {
-        assigned_articles: {
-          only: %i[title description id slug
-          created_at]
-        }
-      })
-    respond_with_json({ categories: categories })
+    @categories = @current_user.categories.order(:order)
   end
 
   def create
-    category = Category.create!(category_params)
+    category = @current_user.categories.create!(category_params)
     respond_with_success(t("successfully_created", entity: "Category"))
   end
 
   def destroy
     @category.destroy!
-    respond_with_json
+    respond_with_success(t("successfully_deleted", entity: "Category"))
   end
 
   def update
@@ -31,7 +24,6 @@ class CategoriesController < ApplicationController
   end
 
   def update_order
-    params.require(:category).permit!
     params[:category][:positions].each_with_index do |list_item, index|
       order = Category.find_by!(id: list_item)
       order.order = index
@@ -48,10 +40,10 @@ class CategoriesController < ApplicationController
   private
 
     def load_category!
-      @category = Category.find_by!(id: params[:id])
+      @category = current_user.categories.find_by!(id: params[:id])
     end
 
     def category_params
-      params.require(:category).permit(:category, :order).merge(assigned_organisation_id: @current_organisation)
+      params.require(:category).permit(:category, :order)
     end
 end

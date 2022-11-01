@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Article < ApplicationRecord
-  belongs_to :assigned_organisation, foreign_key: :assigned_organisation_id, class_name: "Organisation"
   belongs_to :assigned_category, foreign_key: :assigned_category_id, class_name: "Category"
+  belongs_to :user, foreign_key: :user_id, class_name: "User"
 
   validates :title, presence: true, length: { maximum: 50 }, format: { with: /\A[a-z0-9A-Z]+\z/ }
   validate :slug_not_changed

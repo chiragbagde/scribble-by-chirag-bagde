@@ -42,7 +42,7 @@ const SideMenu = ({ history }) => {
       const {
         data: { categories },
       } = await categoriesApi.list();
-      setCategories(categories.sort((a, b) => (a.order > b.order ? 1 : -1)));
+      setCategories(categories);
       setLoading(false);
       if (params[0] === "") {
         history.push(

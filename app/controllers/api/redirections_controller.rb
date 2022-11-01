@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-class RedirectionsController < ApplicationController
+class Api::RedirectionsController < ApplicationController
   before_action :load_redirection!, only: %i[ update destroy show]
   before_action :current_organisation
 
   def index
     redirections = Redirection.all
-    respond_with_json({ redirections: redirections })
+    respond_with_json(redirections: redirections)
   end
 
   def show
-    respond_with_json({ redirection: @redirection })
+    respond_with_json(redirection: @redirection)
   end
 
   def create
@@ -20,7 +20,7 @@ class RedirectionsController < ApplicationController
 
   def destroy
     @redirection.destroy!
-    respond_with_json
+    respond_with_success(t("successfully_deleted", entity: "Redirection"))
   end
 
   def update
@@ -35,6 +35,6 @@ class RedirectionsController < ApplicationController
     end
 
     def redirection_params
-      params.require(:redirection).permit(:old_url, :new_url).merge(assigned_organisation_id: @current_organisation)
+      params.require(:redirection).permit(:old_url, :new_url)
     end
 end

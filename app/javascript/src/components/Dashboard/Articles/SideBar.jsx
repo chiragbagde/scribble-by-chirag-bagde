@@ -31,7 +31,7 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
       } else {
         const {
           data: { articles },
-        } = await articlesApi.filterStatus({ status: menu });
+        } = await articlesApi.list({ status: menu });
         setFilteredArticles(articles);
       }
     } catch (error) {
@@ -40,16 +40,14 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
     }
   };
 
-  const handleUpdateCategories = async category => {
+  const handleUpdateCategories = async (category, id) => {
     setActive(category);
     try {
-      const newSelectedCategories = [
-        ...new Set([...selectedCategories, category]),
-      ];
+      const newSelectedCategories = [...new Set([...selectedCategories, id])];
       setSelectedCategories(Array.from(newSelectedCategories));
       const {
         data: { articles },
-      } = await articlesApi.filterByCategory({
+      } = await articlesApi.list({
         category: newSelectedCategories,
       });
       setFilteredArticles(articles);
@@ -152,9 +150,9 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
           key={idx}
           label={category.category}
           className={`${
-            selectedCategories.includes(category.category) && "bg-white"
+            selectedCategories.includes(category.id) && "bg-white"
           }`}
-          onClick={() => handleUpdateCategories(category.category)}
+          onClick={() => handleUpdateCategories(category.category, category.id)}
           // DblClick={}
         />
       ))}
