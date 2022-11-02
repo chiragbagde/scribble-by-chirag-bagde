@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-class Api::CategoriesController < ApplicationController
-  before_action :load_category!, only: %i[ update destroy]
+class Api::Public::CategoriesController < ApplicationController
+  before_action :load_category!, only: %i[ update destroy update_order]
   before_action :current_user
 
   def index
     @categories = @current_user.categories.order(:order)
+    @categories = FilterCategoryService.new(@categories, params).process()
   end
 
   def create
@@ -14,7 +15,7 @@ class Api::CategoriesController < ApplicationController
   end
 
   def destroy
-    @category.destroy!
+    DeleteCategoryService.new(params[:category], @category, @current_user).process()
     respond_with_success(t("successfully_deleted", entity: "Category"))
   end
 
@@ -24,17 +25,8 @@ class Api::CategoriesController < ApplicationController
   end
 
   def update_order
-    params[:category][:positions].each_with_index do |list_item, index|
-      order = Category.find_by!(id: list_item)
-      order.order = index
-      order.save!
-    end
+    @category.insert_at(params[:category][:position].to_i)
     respond_with_success(t("successfully_updated", entity: "Category"))
-  end
-
-  def filter
-    categories = Category.filter(params.permit(:category))
-    respond_with_json({ categories: categories })
   end
 
   private

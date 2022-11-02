@@ -76,7 +76,7 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
       {
         const {
           data: { categories },
-        } = await categoriesApi.filter({ category: searchTerm });
+        } = await categoriesApi.list({ category: searchTerm });
         setFilteredItems(categories);
       }
     } catch (error) {

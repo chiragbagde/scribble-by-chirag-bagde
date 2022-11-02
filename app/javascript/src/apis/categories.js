@@ -1,28 +1,27 @@
 import axios from "axios";
 
-const list = () => axios.get("/api/categories");
-
-const filter = params => axios.get("/api/categories/filter", { params });
+const list = params => axios.get("/api/public/categories", { params });
 
 const create = payload =>
-  axios.post("/api/categories", {
+  axios.post("/api/public/categories", {
     category: payload,
   });
 
 const update = (payload, id) => {
-  axios.put(`/api/categories/${id}`, {
+  axios.put(`/api/public/categories/${id}`, {
     category: payload,
   });
 };
 
-const updatePosition = positions => {
-  axios.put(`/api/categories/update_order`, {
-    category: { positions },
+const updatePosition = (position, id) => {
+  axios.put(`/api/public/categories/${id}/update_order`, {
+    category: { position, id },
   });
 };
 
-const destroy = id => axios.delete(`/api/categories/${id}`);
+const destroy = (id, params) =>
+  axios.delete(`/api/public/categories/${id}`, { params });
 
-const categoriesApi = { list, create, update, destroy, updatePosition, filter };
+const categoriesApi = { list, create, update, destroy, updatePosition };
 
 export default categoriesApi;

@@ -1,23 +1,23 @@
 import axios from "axios";
 
-const list = params => axios.get("/api/articles", { params });
+const list = params => axios.get("/api/public/articles", { params });
 
-const filter = params => axios.get("/api/articles/filter", { params });
+const filter = params => axios.get("/api/public/articles/filter", { params });
 
 const create = payload =>
-  axios.post("/api/articles", {
+  axios.post("/api/public/articles", {
     article: payload,
   });
 
-const show = id => axios.get(`/api/articles/${id}`);
+const show = id => axios.get(`/api/public/articles/${id}`);
 
 const update = (payload, id) => {
-  axios.put(`/api/articles/${id}`, {
+  axios.put(`/api/public/articles/${id}`, {
     article: payload,
   });
 };
 
-const destroy = id => axios.delete(`/api/articles/${id}`);
+const destroy = id => axios.delete(`/api/public/articles/${id}`);
 
 const articlesApi = {
   list,

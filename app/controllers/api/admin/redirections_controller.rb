@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
-class Api::RedirectionsController < ApplicationController
+class Api::Admin::RedirectionsController < ApplicationController
   before_action :load_redirection!, only: %i[ update destroy show]
   before_action :current_organisation
 
   def index
     redirections = Redirection.all
     respond_with_json(redirections: redirections)
-  end
-
-  def show
-    respond_with_json(redirection: @redirection)
   end
 
   def create

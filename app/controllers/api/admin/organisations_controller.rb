@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::OrganisationsController < ApplicationController
+class Api::Admin::OrganisationsController < ApplicationController
   before_action :current_organisation
 
   def update

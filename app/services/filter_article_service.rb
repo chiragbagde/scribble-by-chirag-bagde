@@ -17,7 +17,7 @@ class FilterArticleService
       @articles = @articles.where(assigned_category_id: params[:category])
     end
 
-    if params.has_key?(:title) && params[:title] != "All"
+    if params.has_key?(:title)
       @articles = @articles.where("title LIKE ?", "%#{params[:title]}%")
     end
     @articles

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::SessionsController < ApplicationController
+class Api::Admin::SessionsController < ApplicationController
   before_action :current_organisation
 
   def create

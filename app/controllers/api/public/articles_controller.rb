@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::ArticlesController < ApplicationController
+class Api::Public::ArticlesController < ApplicationController
   before_action :load_task!, only: %i[ update destroy]
   before_action :current_user
 
