@@ -10,6 +10,7 @@ import categoriesApi from "apis/categories";
 import PageLoader from "components/PageLoader";
 
 import CreateCategories from "./CreateCategories";
+import DeleteAlert from "./DeleteAlert";
 
 const ManageCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -18,6 +19,8 @@ const ManageCategories = () => {
   const [showInput, setShowInput] = useState(false);
   const [showId, setShowId] = useState(0);
   const [categoryUpdated, setCategoryUpdated] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [categoryToBeDeleted, setCategoryToBeDeleted] = useState([]);
 
   const fetchCategories = async () => {
     try {
@@ -45,9 +48,9 @@ const ManageCategories = () => {
     setShowInput(false);
   };
 
-  const handleUpdatePosition = async positions => {
+  const handleUpdatePosition = async (position, id) => {
     try {
-      await categoriesApi.updatePosition(positions);
+      await categoriesApi.updatePosition(position, id);
     } catch (error) {
       logger.error(error);
       setLoading(false);
@@ -58,21 +61,13 @@ const ManageCategories = () => {
     const items = Array.from(categories);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
-    const positions = items.map(({ id }) => id);
     setCategories(items);
-    handleUpdatePosition(positions);
+    handleUpdatePosition(result.destination.index + 1, reorderedItem.id);
   };
 
-  const handleDelete = async id => {
-    try {
-      await categoriesApi.destroy(id);
-      Toastr.success("Category deleted successfully.");
-    } catch (error) {
-      logger.error(error);
-      setLoading(false);
-    }
-    await fetchCategories();
-    setShowInput(false);
+  const handleDelete = category => {
+    setShowDeleteAlert(true);
+    setCategoryToBeDeleted(category);
   };
 
   useEffect(() => {
@@ -109,8 +104,12 @@ const ManageCategories = () => {
         <Droppable droppableId="categories">
           {provided => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              {categories.map(({ category, id }, index) => (
-                <Draggable draggableId={String(id)} index={index} key={id}>
+              {categories.map((category, index) => (
+                <Draggable
+                  draggableId={String(category.id)}
+                  index={index}
+                  key={category.id}
+                >
                   {provided => (
                     <div
                       {...provided.draggableProps}
@@ -118,7 +117,7 @@ const ManageCategories = () => {
                       className="border-b my-6 flex justify-between border-solid pb-3 tracking-tight"
                       ref={provided.innerRef}
                     >
-                      {showInput && showId === id ? (
+                      {showInput && showId === category.id ? (
                         <Formik
                           initialValues={{ category: "" }}
                           onSubmit={handleSubmit}
@@ -127,7 +126,7 @@ const ManageCategories = () => {
                             <Input
                               className="w-64"
                               name="category"
-                              placeholder={category}
+                              placeholder={category.category}
                             />
                           </Form>
                         </Formik>
@@ -135,7 +134,7 @@ const ManageCategories = () => {
                         <div className="flex">
                           <Reorder color="gray" size={20} />
                           <Typography className="ml-3" style="h4">
-                            {category}
+                            {category.category}
                           </Typography>
                         </div>
                       )}
@@ -146,13 +145,13 @@ const ManageCategories = () => {
                           size={20}
                           onClick={() => {
                             setShowInput(!showInput);
-                            setShowId(id);
+                            setShowId(category.id);
                           }}
                         />
                         <Delete
                           color="gray"
                           size={20}
-                          onClick={() => handleDelete(id)}
+                          onClick={() => handleDelete(category)}
                         />
                       </div>
                     </div>
@@ -164,6 +163,14 @@ const ManageCategories = () => {
           )}
         </Droppable>
       </DragDropContext>
+      {showDeleteAlert && (
+        <DeleteAlert
+          categories={categories}
+          categoryToBeDeleted={categoryToBeDeleted}
+          setCategoryUpdated={setCategoryUpdated}
+          onClose={() => setShowDeleteAlert(false)}
+        />
+      )}
     </div>
   );
 };

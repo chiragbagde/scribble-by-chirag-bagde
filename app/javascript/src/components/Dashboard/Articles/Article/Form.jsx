@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 
 import { Formik, Form as FormikForm } from "formik";
-import { Button, ActionDropdown, Toastr } from "neetoui";
+import { Button, Dropdown, Toastr } from "neetoui";
 import { Input, Textarea, Select } from "neetoui/formik";
 
 import articlesApi from "apis/articles";
 import categoriesApi from "apis/categories";
-import organisationsApi from "apis/organisations";
 import PageLoader from "components/PageLoader";
 
 import { ARTICLES_FORM_VALIDATION_SCHEMA, STATUS } from "../constants";
 
-const { Menu, MenuItem } = ActionDropdown;
+const { Menu, MenuItem } = Dropdown;
 
 const Form = ({ history, isEdit, article }) => {
   const [submitted, setSubmitted] = useState(false);
@@ -22,18 +21,13 @@ const Form = ({ history, isEdit, article }) => {
   });
   const [loading, setLoading] = useState(false);
   const [categoryId, setCategoryId] = useState(null);
-  const [user, setUser] = useState("");
+  const [label, setLabel] = useState("Draft");
 
   const refetch = async () => await articlesApi.list();
 
-  function handleStatus(values, item) {
-    values.status = item;
-    setSubmitted(true);
-    handleSubmit(values);
-  }
-
   const handleInitialEdit = categories => {
     if (isEdit) {
+      setLabel(article.status);
       const matchingCategory = categories.map(
         ({ id }) => id === article.assigned_category_id
       );
@@ -44,18 +38,6 @@ const Form = ({ history, isEdit, article }) => {
       });
       setCategoryId(matchingId);
     }
-  };
-
-  const fetchUsername = async () => {
-    try {
-      const {
-        data: { user },
-      } = await organisationsApi.fetchUser();
-      setUser(user.name);
-    } catch (error) {
-      logger.error(error);
-    }
-    setLoading(false);
   };
 
   const fetchCategories = async () => {
@@ -76,16 +58,16 @@ const Form = ({ history, isEdit, article }) => {
   };
 
   useEffect(() => {
-    Promise.all([fetchCategories(), fetchUsername()]);
+    fetchCategories();
   }, []);
 
   const handleSubmit = async values => {
+    if (values.status === "") values.status = label;
     try {
       if (isEdit) {
         await articlesApi.update(
           {
             ...values,
-            author: user,
             assigned_category_id: changeCategory.value,
           },
           values.id
@@ -95,7 +77,6 @@ const Form = ({ history, isEdit, article }) => {
         await articlesApi.create({
           ...values,
           assigned_category_id: changeCategory.value,
-          author: user,
         });
         Toastr.success("Article created successfully.");
       }
@@ -122,11 +103,10 @@ const Form = ({ history, isEdit, article }) => {
       validationSchema={ARTICLES_FORM_VALIDATION_SCHEMA(categoryList)}
       onSubmit={handleSubmit}
     >
-      {({ isSubmitting, values }) => (
+      {({ isSubmitting, setFieldValue }) => (
         <FormikForm className="mx-auto mt-12 max-w-lg space-y-6">
           <div className="flex w-full flex-row space-x-3">
             <Input
-              required
               className="w-full flex-grow-0"
               label="Title"
               name="title"
@@ -134,7 +114,6 @@ const Form = ({ history, isEdit, article }) => {
             />
             <Select
               isSearchable
-              required
               className="w-full flex-grow-0"
               label="Category"
               name="category"
@@ -153,35 +132,53 @@ const Form = ({ history, isEdit, article }) => {
             />
           </div>
           <Textarea
-            required
             className="w-full flex-grow-0"
             label="Description"
             name="description"
             placeholder="Enter description"
             rows={10}
           />
-          <ActionDropdown label={isEdit ? "Update" : "Save Draft"}>
-            <Menu>
-              {STATUS.map((item, idx) => (
-                <MenuItem.Button
-                  disabled={isSubmitting}
-                  key={idx}
-                  value={item}
-                  onClick={() => handleStatus(values, item)}
-                >
-                  {item}
-                </MenuItem.Button>
-              ))}
-            </Menu>
-          </ActionDropdown>
-          <Button
-            disabled={isSubmitting}
-            label="Cancel"
-            size="large"
-            style="text"
-            type="reset"
-            onClick={() => history.push("/")}
-          />
+          <div className="mt-4 flex gap-2">
+            <div className="flex">
+              <Button
+                className="mr-px"
+                label={label === "Draft" ? "Save Draft" : "Published"}
+                name="status"
+                size="medium"
+                style="primary"
+                type="submit"
+                onClick={() => setSubmitted(true)}
+              />
+              <Dropdown>
+                <Menu>
+                  {STATUS.map((item, idx) => (
+                    <MenuItem.Button
+                      disabled={isSubmitting}
+                      key={idx}
+                      value={item}
+                      onClick={() => {
+                        setFieldValue(
+                          "status",
+                          item !== "Draft" ? "Published" : "Draft"
+                        );
+                        setLabel(item);
+                      }}
+                    >
+                      {item}
+                    </MenuItem.Button>
+                  ))}
+                </Menu>
+              </Dropdown>
+            </div>
+            <Button
+              disabled={isSubmitting}
+              label="Cancel"
+              size="large"
+              style="text"
+              type="reset"
+              onClick={() => history.push("/")}
+            />
+          </div>
         </FormikForm>
       )}
     </Formik>

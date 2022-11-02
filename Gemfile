@@ -56,6 +56,7 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
+gem "acts_as_list"
 gem "bcrypt", "~> 3.1.13"
 gem "react-rails"
 gem "simplecov", require: false, group: :test

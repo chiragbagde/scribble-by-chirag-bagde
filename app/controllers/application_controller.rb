@@ -9,7 +9,12 @@ class ApplicationController < ActionController::Base
   private
 
     def current_organisation
-      @current_organisation = Organisation.first.id
+      @current_organisation = Organisation.first
+    end
+
+    def current_user
+      current_organisation
+      @current_user = @current_organisation.assigned_users.first
     end
 
     def handle_validation_error(exception)

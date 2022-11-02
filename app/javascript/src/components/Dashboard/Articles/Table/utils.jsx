@@ -15,6 +15,7 @@ export const articlesTableColumnData = (history, handleDelete, columns) =>
       render: (title, { assigned_category, slug }) => (
         <span
           onClick={() =>
+            slug &&
             history.push(`/public/${assigned_category.category}/${slug}`)
           }
         >
@@ -30,7 +31,7 @@ export const articlesTableColumnData = (history, handleDelete, columns) =>
       render: (created_at, { status }) => (
         <div>
           {status === "Draft" ? (
-            <span>-----</span>
+            <span>-</span>
           ) : (
             <span>{formatDateAndTime(created_at)}</span>
           )}
@@ -42,6 +43,7 @@ export const articlesTableColumnData = (history, handleDelete, columns) =>
       dataIndex: "author",
       key: "author",
       width: "20%",
+      render: author => author.name,
     },
     {
       title: "CATEGORY",

@@ -5,23 +5,24 @@ require "test_helper"
 class ArticlesControllerTest < ActionDispatch::IntegrationTest
   def setup
     @organisation = create(:organisation)
-    @category = create(:category, assigned_organisation_id: @organisation.id)
-    @article = create(:article, assigned_category_id: @category.id, assigned_organisation_id: @organisation.id)
+    @user = User.create(name: "Oliver Smith", email: "oliver@example.com", organisations: @organisation)
+    @category = create(:category, user_id: @user.id)
+    @article = create(:article, assigned_category: @category, user: @user)
   end
 
   def test_should_list_all_articles
-    get articles_path
+    get api_public_articles_path
     assert_response :success
     response_json = response.parsed_body
     assert_equal response_json["articles"].length, Article.count
   end
 
   def test_should_create_valid_article
-    post articles_path,
+    post api_public_articles_path,
       params: {
         article: {
-          title: "Learn Ruby", assigned_category_id: @category.id,
-          assigned_organisation_id: @organisation.id
+          title: "LearnRuby", description: "Ruby", status: "Published", assigned_category_id: @category.id,
+          user: @user.id
         }
       }
     assert_response :success
@@ -30,10 +31,10 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_filter_article_status
-    article1 = create(:article, assigned_category_id: @category.id, assigned_organisation_id: @organisation.id)
+    article1 = create(:article, assigned_category_id: @category.id, user_id: @user.id)
     article1.status = "Draft"
     article1.save!
-    get "/articles/filter_status", params: { status: "Draft" }
+    get api_public_articles_path, params: { status: "Draft" }
     assert_response :success
 
     response_json = response.parsed_body
@@ -41,10 +42,10 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_search_article_title
-    article1 = create(:article, assigned_category_id: @category.id, assigned_organisation_id: @organisation.id)
+    article1 = create(:article, assigned_category_id: @category.id, user_id: @user.id)
     article1.title = "Scribble"
     article1.save!
-    get "/articles/filter", params: { title: "Scribble" }
+    get api_public_articles_path, params: { title: "Scribble" }
     assert_response :success
 
     response_json = response.parsed_body
@@ -52,11 +53,11 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_filter_article_by_category
-    category1 = create(:category, assigned_organisation_id: @organisation.id)
-    category1.category = "Apps"
-    category1.save!
-    article1 = create(:article, assigned_category_id: category1.id, assigned_organisation_id: @organisation.id)
-    get "/articles/filter_by_category", params: { category: ["Apps"] }
+    new_category = create(:category, user: @user)
+    new_category.category = "Apps"
+    new_category.save!
+    new_article = create(:article, assigned_category: new_category, user: @user)
+    get api_public_articles_path, params: { category: [new_category.id] }
     assert_response :success
 
     response_json = response.parsed_body
@@ -68,11 +69,10 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     article_params = {
       article: {
         title: new_title, assigned_category_id: @category.id,
-        assigned_organisation_id: @organisation.id
+        user_id: @user.id
       }
     }
-
-    put article_path(@article.id), params: article_params
+    put api_public_article_path(@article.id), params: article_params
     assert_response :success
     @article.reload
     assert_equal @article.title, new_title
@@ -108,9 +108,9 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     assert_not @article.valid?
   end
 
-  def test_should_destroy_category
+  def test_should_destroy_article
     assert_difference "Article.count", -1 do
-      delete article_path(@article.id)
+      delete api_public_article_path(@article.id)
     end
     assert_response :ok
   end

@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_26_044834) do
+ActiveRecord::Schema.define(version: 2022_11_01_083751) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 2022_10_26_044834) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "slug"
     t.integer "assigned_category_id"
-    t.integer "assigned_organisation_id"
+    t.integer "user_id"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
   end
 
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 2022_10_26_044834) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "order"
-    t.integer "assigned_organisation_id"
+    t.integer "user_id"
   end
 
   create_table "organisations", force: :cascade do |t|
@@ -52,7 +52,6 @@ ActiveRecord::Schema.define(version: 2022_10_26_044834) do
     t.string "new_url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "assigned_organisation_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -63,8 +62,8 @@ ActiveRecord::Schema.define(version: 2022_10_26_044834) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "articles", "categories", column: "assigned_category_id"
-  add_foreign_key "articles", "organisations", column: "assigned_organisation_id"
-  add_foreign_key "categories", "organisations", column: "assigned_organisation_id"
-  add_foreign_key "redirections", "organisations", column: "assigned_organisation_id"
+  add_foreign_key "articles", "categories", column: "assigned_category_id", on_delete: :cascade
+  add_foreign_key "articles", "users"
+  add_foreign_key "categories", "users", on_delete: :cascade
+  add_foreign_key "users", "organisations", column: "assigned_organisation_id", on_delete: :cascade
 end

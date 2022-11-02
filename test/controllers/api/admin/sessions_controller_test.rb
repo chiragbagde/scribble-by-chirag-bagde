@@ -8,14 +8,16 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_should_login_user_with_valid_credentials
-    post session_path, params: { login: { site_name: @organisation.site_name, password: @organisation.password } },
+    credentials = { site_name: @organisation.site_name, password: @organisation.password }
+    post api_admin_session_path, params: { login: credentials },
       as: :json
     assert_response :success
     assert_equal response.parsed_body["authentication_token"], @organisation.authentication_token
   end
 
   def test_shouldnt_login_user_with_invalid_credentials
-    post session_path, params: { login: { site_name: @organisation.site_name, password: "invalid password" } },
+    credentials = { site_name: @organisation.site_name, password: "invalid password" }
+    post api_admin_session_path, params: { login: credentials },
       as: :json
     assert_response :unauthorized
     response_json = response.parsed_body

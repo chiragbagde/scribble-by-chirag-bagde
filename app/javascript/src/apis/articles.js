@@ -1,31 +1,23 @@
 import axios from "axios";
 
-const list = () => axios.get("/articles");
+const list = params => axios.get("/api/public/articles", { params });
 
-const filter = params => axios.get("/articles/filter", { params });
-
-const filterByCategory = params =>
-  axios.get("/articles/filter_by_category", { params });
-
-const filterStatus = params => axios.get("/articles/filter_status", { params });
-
-const filterColumns = params =>
-  axios.get("/articles/filter_columns", { params });
+const filter = params => axios.get("/api/public/articles/filter", { params });
 
 const create = payload =>
-  axios.post("/articles", {
+  axios.post("/api/public/articles", {
     article: payload,
   });
 
-const show = id => axios.get(`/articles/${id}`);
+const show = id => axios.get(`/api/public/articles/${id}`);
 
 const update = (payload, id) => {
-  axios.put(`/articles/${id}`, {
+  axios.put(`/api/public/articles/${id}`, {
     article: payload,
   });
 };
 
-const destroy = id => axios.delete(`/articles/${id}`);
+const destroy = id => axios.delete(`/api/public/articles/${id}`);
 
 const articlesApi = {
   list,
@@ -33,10 +25,7 @@ const articlesApi = {
   update,
   show,
   destroy,
-  filterByCategory,
-  filterStatus,
   filter,
-  filterColumns,
 };
 
 export default articlesApi;
