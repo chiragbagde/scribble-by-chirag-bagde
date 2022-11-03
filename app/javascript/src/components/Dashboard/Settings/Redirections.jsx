@@ -11,8 +11,8 @@ const Redirections = () => {
   const [showInput, setShowInput] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showId, setShowId] = useState(null);
-  const [oldUrl, setOldUrl] = useState("");
-  const [newUrl, setNewUrl] = useState("");
+  const [toPath, setToPath] = useState("");
+  const [fromPath, setFromPath] = useState("");
   const [createRedirection, setCreateRedirection] = useState(false);
   const [updateRedirections, setUpdateRedirections] = useState(false);
 
@@ -46,7 +46,7 @@ const Redirections = () => {
   const handleSubmit = async () => {
     try {
       setUpdateRedirections(true);
-      await RedirectionsApi.create({ old_url: oldUrl, new_url: newUrl });
+      await RedirectionsApi.create({ to: toPath, from: fromPath });
       Toastr.success("Redirection created successfully.");
       setLoading(false);
       setCreateRedirection(false);
@@ -54,39 +54,35 @@ const Redirections = () => {
       logger.error(error);
       setLoading(false);
       setCreateRedirection(false);
-      Toastr.error("Cyclic redirection are not allowed!");
+      Toastr.error(error);
     }
   };
 
   const handleCreateRedirection = () => {
     setCreateRedirection(!createRedirection);
     setUpdateRedirections(true);
-    setOldUrl("/1");
-    setNewUrl("/2");
+    setToPath("/2");
+    setFromPath("/1");
   };
 
   const handleUpdateRedirection = async () => {
     try {
       setUpdateRedirections(true);
-      await RedirectionsApi.update(
-        { old_url: oldUrl, new_url: newUrl },
-        showId
-      );
-      Toastr.error("Cyclic Redirections not possible");
+      await RedirectionsApi.update({ to: toPath, from: fromPath }, showId);
+      Toastr.success("Redirection updated successfully.");
     } catch (error) {
       logger.error(error);
       setLoading(false);
-      Toastr.success("Redirection updated successfully.");
       Toastr.error("Cyclic Redirections not possible");
     }
     await fetchRedirections();
     setShowInput(false);
   };
 
-  const handleEdit = (id, old_url, new_url) => {
+  const handleEdit = (id, to, from) => {
     setShowId(id);
-    setOldUrl(old_url);
-    setNewUrl(new_url);
+    setToPath(to);
+    setFromPath(from);
     setShowInput(!showInput);
   };
 
@@ -117,25 +113,24 @@ const Redirections = () => {
             <span>TO PATH</span>
             <span>ACTIONS</span>
           </div>
-          {redirections.map(({ new_url, old_url, id }) => (
+          {redirections.map(({ from, to, id }) => (
             <div className="flex justify-between bg-white p-4" key={id}>
               {showInput && showId === id ? (
                 <>
                   <div className="flex-col">
-                    <span>{`localhost:3000${old_url}`}</span>
+                    <span>{`localhost:3000${from}`}</span>
                     <Input
                       className="mt-2"
-                      value={oldUrl}
-                      onChange={e => setOldUrl(e.target.value)}
+                      value={fromPath}
+                      onChange={e => setFromPath(e.target.value)}
                     />
                   </div>
                   <div className="flex-col">
-                    <span>{`localhost:3000${new_url}`}</span>
+                    <span>{`localhost:3000${to}`}</span>
                     <Input
                       className="mt-2"
-                      placeholder={new_url}
-                      value={newUrl}
-                      onChange={e => setNewUrl(e.target.value)}
+                      value={toPath}
+                      onChange={e => setToPath(e.target.value)}
                       onKeyDown={e => {
                         e.key === "Enter" && handleUpdateRedirection(id);
                       }}
@@ -144,15 +139,15 @@ const Redirections = () => {
                 </>
               ) : (
                 <>
-                  <span>{`localhost:3000${old_url}`}</span>
-                  <span>{`localhost:3000${new_url}`}</span>
+                  <span>{`localhost:3000${from}`}</span>
+                  <span>{`localhost:3000${to}`}</span>
                 </>
               )}
               <span className="flex justify-center">
                 <Edit
                   size={20}
                   onClick={() => {
-                    handleEdit(id, old_url, new_url);
+                    handleEdit(id, to, from);
                   }}
                 />
                 <Delete size={20} onClick={() => handleDelete(id)} />
@@ -163,14 +158,14 @@ const Redirections = () => {
             <div className="flex justify-between bg-white p-4">
               <div className="flex-col">
                 <Input
-                  value={oldUrl}
-                  onChange={e => setOldUrl(e.target.value)}
+                  value={fromPath}
+                  onChange={e => setFromPath(e.target.value)}
                 />
               </div>
               <div className="flex-col">
                 <Input
-                  value={newUrl}
-                  onChange={e => setNewUrl(e.target.value)}
+                  value={toPath}
+                  onChange={e => setToPath(e.target.value)}
                 />
               </div>
               <Check onClick={handleSubmit} />

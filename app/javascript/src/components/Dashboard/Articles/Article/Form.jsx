@@ -29,7 +29,7 @@ const Form = ({ history, isEdit, article }) => {
     if (isEdit) {
       setLabel(article.status);
       const matchingCategory = categories.map(
-        ({ id }) => id === article.assigned_category_id
+        ({ id }) => id === article.category_id
       );
       const matchingId = matchingCategory.indexOf(true);
       setChangeCategory({
@@ -68,7 +68,7 @@ const Form = ({ history, isEdit, article }) => {
         await articlesApi.update(
           {
             ...values,
-            assigned_category_id: changeCategory.value,
+            category_id: changeCategory.value,
           },
           values.id
         );
@@ -76,11 +76,11 @@ const Form = ({ history, isEdit, article }) => {
       } else {
         await articlesApi.create({
           ...values,
-          assigned_category_id: changeCategory.value,
+          category_id: changeCategory.value,
         });
         Toastr.success("Article created successfully.");
       }
-      refetch();
+      await refetch();
       history.push("/");
     } catch (error) {
       logger.error(error);

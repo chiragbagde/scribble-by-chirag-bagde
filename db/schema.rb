@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_01_083751) do
+ActiveRecord::Schema.define(version: 2022_11_03_140423) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,13 +20,13 @@ ActiveRecord::Schema.define(version: 2022_11_01_083751) do
   create_table "articles", force: :cascade do |t|
     t.text "title"
     t.string "author"
-    t.string "status"
     t.text "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "slug"
-    t.integer "assigned_category_id"
+    t.integer "category_id"
     t.integer "user_id"
+    t.string "status", default: "Draft", null: false
     t.index ["slug"], name: "index_articles_on_slug", unique: true
   end
 
@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 2022_11_01_083751) do
     t.string "category"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "order"
+    t.integer "position"
     t.integer "user_id"
   end
 
@@ -48,22 +48,24 @@ ActiveRecord::Schema.define(version: 2022_11_01_083751) do
   end
 
   create_table "redirections", force: :cascade do |t|
-    t.string "old_url"
-    t.string "new_url"
+    t.string "from"
+    t.string "to"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "organisation_id"
   end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
-    t.integer "assigned_organisation_id"
+    t.integer "organisation_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "articles", "categories", column: "assigned_category_id", on_delete: :cascade
+  add_foreign_key "articles", "categories", on_delete: :cascade
   add_foreign_key "articles", "users"
   add_foreign_key "categories", "users", on_delete: :cascade
-  add_foreign_key "users", "organisations", column: "assigned_organisation_id", on_delete: :cascade
+  add_foreign_key "redirections", "organisations", on_delete: :cascade
+  add_foreign_key "users", "organisations", on_delete: :cascade
 end

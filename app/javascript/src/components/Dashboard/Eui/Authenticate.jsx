@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Formik, Form } from "formik";
-import { Typography, Button } from "neetoui";
+import { Typography, Button, Toastr } from "neetoui";
 import { Input } from "neetoui/formik";
 
 import organisationsApi from "apis/organisations";
@@ -34,9 +34,11 @@ const Authenticate = ({ history }) => {
       setToLocalStorage({
         authToken: response.data.authentication_token,
       });
+      Toastr.success("Successfully logged in");
       history.push("/public");
     } catch (error) {
       logger.error(error);
+      Toastr.error("Incorrect credentials! Please try again.");
     }
   };
 

@@ -4,6 +4,11 @@ en:
   successfully_deleted: "%{entity} was successfully deleted!"
   redirection:
     check_redirection_loop: "This redirection cause a redirect loop"
-    check_equal: "Old Url and New Url cannot be equal"
+    check_equal: "To and from cannot be equal"
   session:
     incorrect_credentials: "Incorrect credentials, try again."
+  unique: "%{entity} has already been taken"
+  article:
+    slug:
+      immutable: "Slug is immutable"
+  missing: "%{entity} must exist"

@@ -14,13 +14,13 @@ const update = (payload, id) => {
 };
 
 const updatePosition = (position, id) => {
-  axios.put(`/api/public/categories/${id}/update_order`, {
+  axios.put(`/api/admin/categories/${id}/update_order`, {
     category: { position, id },
   });
 };
 
 const destroy = (id, params) =>
-  axios.delete(`/api/public/categories/${id}`, { params });
+  axios.delete(`/api/admin/categories/${id}`, { params });
 
 const categoriesApi = { list, create, update, destroy, updatePosition };
 

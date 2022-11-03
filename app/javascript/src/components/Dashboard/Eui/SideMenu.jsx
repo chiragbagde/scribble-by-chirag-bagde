@@ -37,6 +37,20 @@ const SideMenu = ({ history }) => {
   const params = useParams();
   const [paramsCategory, paramsSlug] = params[0].split("/");
 
+  const findFirstNonNullArgument = (...args) =>
+    args
+      .filter(({ articles }) => articles.length > 0)
+      .filter(({ slug }) => slug !== null)[0];
+
+  const firstArticleDetails = categories => {
+    if (params[0] === "") {
+      const category = findFirstNonNullArgument(...categories);
+      history.push(
+        `/public/${category.category}/${category["articles"][0]["slug"]}`
+      );
+    }
+  };
+
   const fetchCategories = async () => {
     try {
       const {
@@ -44,11 +58,7 @@ const SideMenu = ({ history }) => {
       } = await categoriesApi.list();
       setCategories(categories);
       setLoading(false);
-      if (params[0] === "") {
-        history.push(
-          `/public/${categories[0].category}/${categories[0]["assigned_articles"][0]["slug"]}`
-        );
-      }
+      firstArticleDetails(categories);
     } catch (error) {
       logger.error(error);
       setLoading(false);
@@ -61,10 +71,11 @@ const SideMenu = ({ history }) => {
 
   useEffect(() => {
     if (categories.length > 0 && !loading) {
+      firstArticleDetails(categories);
       const categoryData = categories.filter(
         ({ category }) => category === paramsCategory
       );
-      const paramsArticle = categoryData[0].assigned_articles.filter(
+      const paramsArticle = categoryData[0].articles.filter(
         ({ slug }) => slug === paramsSlug
       )[0];
       setTitle(paramsArticle.title);
@@ -95,7 +106,7 @@ const SideMenu = ({ history }) => {
                 key={idx}
                 label={category["category"]}
               >
-                {category["assigned_articles"].map(
+                {category["articles"].map(
                   ({ slug, title, description, created_at }, idx) =>
                     slug && (
                       <MenuItem

@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 class Category < ApplicationRecord
-  belongs_to :user, foreign_key: :user_id, class_name: "User"
-  has_many :assigned_articles, foreign_key: :assigned_category_id, class_name: "Article"
+  belongs_to :user
+  has_many :articles
 
-  acts_as_list column: :order
+  validates :category, uniqueness: true
+
+  acts_as_list
 end

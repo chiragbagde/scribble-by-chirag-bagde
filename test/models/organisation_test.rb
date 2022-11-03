@@ -6,9 +6,9 @@ class OrganisationTest < ActiveSupport::TestCase
   MIN_PASSWORD_LENGTH = 6
   def setup
     @organisation = create(:organisation)
-    @user = User.create(name: "Oliver Smith", email: "oliver@example.com", organisations: @organisation)
-    @category = create(:category, user_id: @user.id)
-    @article = create(:article, assigned_category: @category, user: @user)
+    @user = User.create(name: "Oliver Smith", email: "oliver@example.com", organisation: @organisation)
+    @category = create(:category, user: @user)
+    @article = create(:article, category: @category, user: @user)
   end
 
   def test_site_name_cannot_be_null

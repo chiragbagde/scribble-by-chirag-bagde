@@ -4,24 +4,34 @@ require "test_helper"
 
 class RedirectionTest < ActiveSupport::TestCase
   def setup
-    @redirection = create(:redirection)
+    @organisation = create(:organisation)
+    @redirection = create(:redirection, organisation: @organisation)
   end
 
-  def test_old_url_uniqueness
+  def test_to_and_from_uniqueness
     new_redirection = @redirection.dup
     assert_not new_redirection.valid?
   end
 
-  def test_cyclic_loop
-    redirection = Redirection.create(old_url: "/1", new_url: "/2")
-    redirection1 = Redirection.create(old_url: "/2", new_url: "/3")
-    redirection2 = Redirection.create(old_url: "/3", new_url: "/4")
-    redirection3 = Redirection.create(old_url: "/4", new_url: "/1")
-    assert_not redirection3.valid?
+  def test_invalid_cyclic_loop
+    redirection = Redirection.create(to: "/1", from: "/2", organisation: @organisation)
+    redirection_one = Redirection.create(to: "/2", from: "/3", organisation: @organisation)
+    redirection_two = Redirection.create(to: "/3", from: "/4", organisation: @organisation)
+    redirection_three = Redirection.create(to: "/4", from: "/1", organisation: @organisation)
+    assert_equal redirection_three.errors.full_messages.to_sentence,
+      t("redirection.check_redirection_loop")
   end
 
-  def test_from_and_to
-    redirection = Redirection.create(old_url: "/1", new_url: "/1")
+  def test_valid_cyclic_loop
+    redirection = Redirection.create!(to: "/3", from: "/2", organisation: @organisation)
+    redirection_one = Redirection.create!(to: "/5", from: "/3", organisation: @organisation)
+    redirection_two = Redirection.create!(to: "/2", from: "/4", organisation: @organisation)
+    redirection_three = Redirection.new(to: "/1", from: "/2", organisation: @organisation)
+    assert_equal redirection_three.save, true
+  end
+
+  def test_to_and_from_equal
+    redirection = Redirection.create(to: "/1", from: "/1")
     assert_not redirection.valid?
   end
 end

@@ -3,5 +3,6 @@
 class User < ApplicationRecord
   has_many :articles
   has_many :categories
-  belongs_to :organisations, foreign_key: :assigned_organisation_id, class_name: "Organisation"
+  has_many :redirections
+  belongs_to :organisation
 end

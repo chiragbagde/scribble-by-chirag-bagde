@@ -2,8 +2,6 @@ import axios from "axios";
 
 const list = params => axios.get("/api/public/articles", { params });
 
-const filter = params => axios.get("/api/public/articles/filter", { params });
-
 const create = payload =>
   axios.post("/api/public/articles", {
     article: payload,
@@ -25,7 +23,6 @@ const articlesApi = {
   update,
   show,
   destroy,
-  filter,
 };
 
 export default articlesApi;

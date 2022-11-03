@@ -5,13 +5,14 @@ Rails.application.routes.draw do
     namespace :api do
       namespace :public do
         resources :articles, except: %i[new edit show]
-        resources :categories do
+        resources :categories, except: %i[destroy]
+      end
+      namespace :admin do
+        resources :categories, only: %i[destroy] do
           member do
             put "update_order"
           end
         end
-      end
-      namespace :admin do
         resources :redirections, except: %i[new edit]
         resource :organisation, except: %i[new edit index destroy]
         resource :session, only: %i[create]

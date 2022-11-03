@@ -1,23 +1,34 @@
 # frozen_string_literal: true
 
 class Redirection < ApplicationRecord
-  validate :check_redirection_loop, on: [:create, :update]
-  validate :old_url_and_new_url_not_equal, on: [:create, :update]
-  validates :old_url, uniqueness: true, presence: true
+  belongs_to :organisation
+
+  validate :check_if_redirection_cycle_present, on: [:create, :update]
+  validates :to, uniqueness: { scope: :from }
 
   private
 
     def check_redirection_loop
-      if Redirection.find_by(old_url: self.new_url).present?
-        if Redirection.find_by(new_url: self.old_url).present?
-          errors.add(:base, t("redirection.check_redirection_loop"))
+      is_cyclic = true
+      current_to = self.to
+
+      while self.from != current_to
+        if Redirection.where(from: current_to).present?
+          current_to = Redirection.find_by!(from: current_to).to
+        else
+          is_cyclic = false
+          break
         end
+      end
+      if is_cyclic
+        errors.add(:base, t("redirection.check_redirection_loop"))
       end
     end
 
-    def old_url_and_new_url_not_equal
-      if self.old_url == self.new_url
+    def check_if_redirection_cycle_present
+      if self.to == self.from
         errors.add(:base, t("redirection.check_equal"))
+      elsif check_redirection_loop
       end
     end
 end

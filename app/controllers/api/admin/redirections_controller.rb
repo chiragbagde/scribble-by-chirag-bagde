@@ -5,12 +5,11 @@ class Api::Admin::RedirectionsController < ApplicationController
   before_action :current_organisation
 
   def index
-    redirections = Redirection.all
-    respond_with_json(redirections: redirections)
+    @redirections = current_organisation.redirections.all
   end
 
   def create
-    redirection = Redirection.create!(redirection_params)
+    redirection = current_organisation.redirections.create!(redirection_params)
     respond_with_success(t("successfully_created", entity: "Redirection"))
   end
 
@@ -27,10 +26,10 @@ class Api::Admin::RedirectionsController < ApplicationController
   private
 
     def load_redirection!
-      @redirection = Redirection.find_by!(id: params[:id])
+      @redirection = current_organisation.redirections.find(params[:id])
     end
 
     def redirection_params
-      params.require(:redirection).permit(:old_url, :new_url)
+      params.require(:redirection).permit(:to, :from)
     end
 end
