@@ -18,7 +18,6 @@
   "name": "scribble-by-chirag-bagde",
   "private": true,
   "engines": {
-    "node": "16.4.2",
     "npm": "7.x",
     "yarn": "1.22.x"
   },
