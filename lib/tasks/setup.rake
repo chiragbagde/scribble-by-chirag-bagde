@@ -2,7 +2,7 @@
 
 desc "drops the db, creates db, migrates db and populates sample data"
 task setup: [:environment, "db:drop", "db:create", "db:migrate"] do
-  Rake::Task["populate_with_sample_data"].invoke if Rails.env.development?
+  Rake::Task["populate_with_sample_data"].invoke
 end
 
 task populate_with_sample_data: [:environment] do
@@ -16,21 +16,12 @@ end
 
 def create_sample_data!
   puts "Seeding sample data..."
-  create_sample_user_data!
   create_sample_organisation_data!
+  create_sample_user_data!
   create_sample_category_data!
   create_sample_article_data!
   create_sample_redirection_data!
 end
-
-def create_sample_user_data!
-  puts "Seeding with sample user..."
-  User.create!(
-    name: "Oliver Smith",
-    email: "oliver@example.com"
-  )
-  puts "Done! site is created successfully."
- end
 
 def create_sample_organisation_data!
   puts "Seeding with sample user..."
@@ -42,11 +33,21 @@ def create_sample_organisation_data!
   puts "Done! site is created successfully."
 end
 
+def create_sample_user_data!
+  puts "Seeding with sample user..."
+  User.create!(
+    name: "Oliver Smith",
+    email: "oliver@example.com",
+    organisation_id: 1
+  )
+  puts "Done! site is created successfully."
+ end
+
 def create_sample_category_data!
   puts "Seeding with sample category..."
   Category.create!(
     category: "General",
-    organisation_id: 1
+    user_id: 1
   )
   puts "Done! category is created successfully"
 end
@@ -58,7 +59,7 @@ def create_sample_article_data!
     description: "Hello world",
     status: "Published",
     author: "Oliver Smith",
-    organisation_id: 1,
+    user_id: 1,
     category_id: 1
   )
   puts "Done! article is created successfully."
@@ -67,8 +68,8 @@ end
 def create_sample_redirection_data!
   puts "Seeding with sample user..."
   Redirection.create!(
-    old_url: "/1",
-    new_url: "/2",
+    to: "/1",
+    from: "/2",
     organisation_id: 1
   )
   puts "Done! redirection is created successfully."
