@@ -5,7 +5,7 @@ class Api::Admin::SessionsController < ApplicationController
 
   def create
     unless @current_organisation.authenticate(login_params[:password])
-      respond_with_error("Incorrect credentials, try again.", :unauthorized)
+      respond_with_error(t("session.incorrect_credentials", entity: "Organisation"), :unauthorized)
     end
   end
 

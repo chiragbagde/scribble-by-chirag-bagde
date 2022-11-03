@@ -12,11 +12,10 @@ export const articlesTableColumnData = (history, handleDelete, columns) =>
       key: "title",
       width: "25%",
       className: "text-indigo-500",
-      render: (title, { assigned_category, slug }) => (
+      render: (title, { category, slug }) => (
         <span
           onClick={() =>
-            slug &&
-            history.push(`/public/${assigned_category.category}/${slug}`)
+            slug && history.push(`/public/${category.category}/${slug}`)
           }
         >
           {title}
@@ -47,10 +46,10 @@ export const articlesTableColumnData = (history, handleDelete, columns) =>
     },
     {
       title: "CATEGORY",
-      dataIndex: "assigned_category",
+      dataIndex: "category",
       key: "category",
       width: "20%",
-      render: assigned_category => assigned_category.category,
+      render: category => category.category,
     },
     {
       title: "Status",

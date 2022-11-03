@@ -2,6 +2,6 @@
 json.extract! category,
   :id,
   :category,
-  :order
+  :position
 
-json.assigned_articles category.assigned_articles, :title, :description, :created_at, :slug
+json.articles category.articles, :title, :description, :created_at, :slug

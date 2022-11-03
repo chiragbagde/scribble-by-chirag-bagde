@@ -57,11 +57,9 @@ const App = () => {
         path={["/", "/articles/*", "/settings"]}
       />
       <Switch history={history}>
-        {redirections.map(({ old_url, new_url, id }) => (
-          <Route exact from={`/${old_url}`} key={id}>
-            <Redirect
-              to={{ pathname: `/${new_url}`, state: { status: 301 } }}
-            />
+        {redirections.map(({ from, to, id }) => (
+          <Route exact from={`${from}`} key={id}>
+            <Redirect to={{ pathname: `${to}`, state: { status: 301 } }} />
           </Route>
         ))}
         <Route

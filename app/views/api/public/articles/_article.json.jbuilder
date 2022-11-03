@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 json.extract! article,
   :id,
@@ -6,7 +7,7 @@ json.extract! article,
   :created_at,
   :slug,
   :status,
-  :assigned_category_id
+  :category_id
 
-json.assigned_category article.assigned_category, :id, :category
-json.author article.user, :name, :assigned_organisation_id
+json.category article.category, :id, :category
+json.author article.user, :name, :organisation_id

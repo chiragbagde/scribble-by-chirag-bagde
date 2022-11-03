@@ -1,6 +1,8 @@
-desc 'drops the db, creates db, migrates db and populates sample data'
-task setup: [:environment, 'db:drop', 'db:create', 'db:migrate'] do
- Rake::Task['populate_with_sample_data'].invoke if Rails.env.development?
+# frozen_string_literal: true
+
+desc "drops the db, creates db, migrates db and populates sample data"
+task setup: [:environment, "db:drop", "db:create", "db:migrate"] do
+  Rake::Task["populate_with_sample_data"].invoke if Rails.env.development?
 end
 
 task populate_with_sample_data: [:environment] do
@@ -24,8 +26,8 @@ end
 def create_sample_user_data!
   puts "Seeding with sample user..."
   User.create!(
-    name: 'Oliver Smith',
-    email: 'oliver@example.com'
+    name: "Oliver Smith",
+    email: "oliver@example.com"
   )
   puts "Done! site is created successfully."
  end
@@ -33,9 +35,9 @@ def create_sample_user_data!
 def create_sample_organisation_data!
   puts "Seeding with sample user..."
   Organisation.create!(
-    site_name: 'spinkart',
-    status: 'checked',
-    password: 'welcome1'
+    site_name: "spinkart",
+    status: "checked",
+    password: "welcome1"
   )
   puts "Done! site is created successfully."
 end
@@ -44,7 +46,7 @@ def create_sample_category_data!
   puts "Seeding with sample category..."
   Category.create!(
     category: "General",
-    assigned_organisation_id: 1
+    organisation_id: 1
   )
   puts "Done! category is created successfully"
 end
@@ -56,8 +58,8 @@ def create_sample_article_data!
     description: "Hello world",
     status: "Published",
     author: "Oliver Smith",
-    assigned_organisation_id: 1,
-    assigned_category_id: 1
+    organisation_id: 1,
+    category_id: 1
   )
   puts "Done! article is created successfully."
 end
@@ -65,9 +67,9 @@ end
 def create_sample_redirection_data!
   puts "Seeding with sample user..."
   Redirection.create!(
-    old_url: '/1',
-    new_url: '/2',
-    assigned_organisation_id: 1
+    old_url: "/1",
+    new_url: "/2",
+    organisation_id: 1
   )
   puts "Done! redirection is created successfully."
  end

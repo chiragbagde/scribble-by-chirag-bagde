@@ -21,6 +21,7 @@ const CreateCategories = ({
       Toastr.success("Category created successfully.");
     } catch (error) {
       logger.error(error);
+      Toastr.error(error);
     }
   };
 

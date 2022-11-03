@@ -5,12 +5,12 @@ class Api::Public::ArticlesController < ApplicationController
   before_action :current_user
 
   def index
-    @articles = @current_user.articles
-    @articles = FilterArticleService.new(@articles, params).process()
+    @articles = current_user.articles
+    @articles = FilterArticleService.new(@articles, params).process
   end
 
   def create
-    article = @current_user.articles.create!(article_params)
+    article = current_user.articles.create!(article_params)
     respond_with_success(t("successfully_created", entity: "Article"))
   end
 
@@ -27,12 +27,12 @@ class Api::Public::ArticlesController < ApplicationController
   private
 
     def load_task!
-      @article = current_user.articles.find_by!(id: params[:id])
+      @article = current_user.articles.find(params[:id])
     end
 
     def article_params
       params.require(:article).permit(
         :title, :author, :status, :description,
-        :assigned_category_id)
+        :category_id)
     end
 end

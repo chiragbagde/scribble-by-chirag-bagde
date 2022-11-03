@@ -5,9 +5,9 @@ require "test_helper"
 class ArticlesControllerTest < ActionDispatch::IntegrationTest
   def setup
     @organisation = create(:organisation)
-    @user = User.create(name: "Oliver Smith", email: "oliver@example.com", organisations: @organisation)
-    @category = create(:category, user_id: @user.id)
-    @article = create(:article, assigned_category: @category, user: @user)
+    @user = User.create(name: "Oliver Smith", email: "oliver@example.com", organisation: @organisation)
+    @category = create(:category, user: @user)
+    @article = create(:article, category: @category, user: @user)
   end
 
   def test_should_list_all_articles
@@ -21,7 +21,7 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     post api_public_articles_path,
       params: {
         article: {
-          title: "LearnRuby", description: "Ruby", status: "Published", assigned_category_id: @category.id,
+          title: "LearnRuby", description: "Ruby", status: "Published", category_id: @category.id,
           user: @user.id
         }
       }
@@ -31,9 +31,9 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_filter_article_status
-    article1 = create(:article, assigned_category_id: @category.id, user_id: @user.id)
-    article1.status = "Draft"
-    article1.save!
+    first_article = create(:article, category: @category, user: @user)
+    first_article.status = "Draft"
+    first_article.save!
     get api_public_articles_path, params: { status: "Draft" }
     assert_response :success
 
@@ -42,9 +42,9 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_search_article_title
-    article1 = create(:article, assigned_category_id: @category.id, user_id: @user.id)
-    article1.title = "Scribble"
-    article1.save!
+    first_article = create(:article, category: @category, user: @user)
+    first_article.title = "Scribble"
+    first_article.save!
     get api_public_articles_path, params: { title: "Scribble" }
     assert_response :success
 
@@ -53,10 +53,10 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_filter_article_by_category
-    new_category = create(:category, user: @user)
+    new_category = Category.create(category: "Misc", user: @user)
     new_category.category = "Apps"
     new_category.save!
-    new_article = create(:article, assigned_category: new_category, user: @user)
+    new_article = create(:article, category: new_category, user: @user)
     get api_public_articles_path, params: { category: [new_category.id] }
     assert_response :success
 
@@ -68,7 +68,7 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     new_title = "ScribbleUpdated"
     article_params = {
       article: {
-        title: new_title, assigned_category_id: @category.id,
+        title: new_title, category_id: @category.id,
         user_id: @user.id
       }
     }
@@ -76,7 +76,18 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     @article.reload
     assert_equal @article.title, new_title
-    assert_equal @article.assigned_category_id, @category.id
+    assert_equal @article.category_id, @category.id
+  end
+
+  def test_error_raised_for_duplicate_slug
+    another_article = create(:article, category: @category, user: @user)
+
+    assert_raises ActiveRecord::RecordInvalid do
+      another_article.update!(slug: @article.slug)
+    end
+
+    error_msg = another_article.errors.full_messages.to_sentence
+    assert_match t("article.slug.immutable"), error_msg
   end
 
   def test_article_should_not_be_valid_without_title
@@ -92,15 +103,9 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
   end
 
   def test_article_should_not_be_valid_without_category
-    @article.assigned_category_id = nil
+    @article.category_id = nil
     assert_not @article.valid?
-    assert_includes @article.errors.full_messages, "Assigned category must exist"
-  end
-
-  def test_article_should_not_be_valid_without_status
-    @article.status = ""
-    assert_not @article.valid?
-    assert_includes @article.errors.full_messages, "Status can't be blank"
+    assert_includes @article.errors.full_messages, "Category must exist"
   end
 
   def test_valid_slug

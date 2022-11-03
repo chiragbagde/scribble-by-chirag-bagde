@@ -1,20 +1,21 @@
 # frozen_string_literal: true
 
 class Article < ApplicationRecord
-  belongs_to :assigned_category, foreign_key: :assigned_category_id, class_name: "Category"
-  belongs_to :user, foreign_key: :user_id, class_name: "User"
+  belongs_to :category
+  belongs_to :user
 
   validates :title, presence: true, length: { maximum: 50 }, format: { with: /\A[a-z0-9A-Z]+\z/ }
   validate :slug_not_changed
   validates :description, presence: true
-  validates :status, presence: true
 
-  before_create :check_status
-  before_update :check_status
+  enum status: { Draft: "Draft", Published: "Published" }, _default: :Draft
+
+  before_create :check_status_to_set_slug
+  before_update :check_status_to_set_slug
 
   private
 
-    def check_status
+    def check_status_to_set_slug
       if status === "Published"
         set_slug
       end

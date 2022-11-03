@@ -5,9 +5,9 @@ require "test_helper"
 class OrganisationsControllerTest < ActionDispatch::IntegrationTest
   def setup
     @organisation = create(:organisation)
-    @user = User.create(name: "Oliver Smith", email: "oliver@example.com", organisations: @organisation)
+    @user = User.create(name: "Oliver Smith", email: "oliver@example.com", organisation: @organisation)
     @category = create(:category, user_id: @user.id)
-    @article = create(:article, assigned_category: @category, user: @user) end
+    @article = create(:article, category: @category, user: @user) end
 
   def test_can_update_organisation
     site_name = "Spinkart"

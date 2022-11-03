@@ -12,7 +12,7 @@ class FilterCategoryService
     if params
       categories = @categories.where("category LIKE ?", "%#{params[:category]}%%")
     else
-      @categories
+      categories
     end
   end
 end

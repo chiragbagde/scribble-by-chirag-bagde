@@ -8,5 +8,5 @@ json.organisation do
     :status,
     :authentication_token
 
-  json.users @current_organisation.assigned_users, :name, :id
+  json.users @current_organisation.users, :name, :id
 end

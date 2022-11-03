@@ -19,7 +19,7 @@ const DeleteAlert = ({
   const handleDelete = async () => {
     try {
       await categoriesApi.destroy(categoryToBeDeleted.id, {
-        category: [categoryToBeDeleted.id, moveToCategory.value],
+        category: moveToCategory.value,
       });
       Toastr.success("Category deleted successfully.");
     } catch (error) {
@@ -58,7 +58,7 @@ const DeleteAlert = ({
           {`You are permanently deleting category ${categoryToBeDeleted.category}. This action cannot be undone.`}
         </Typography>
         <Callout className="mb-3" icon={Warning} style="danger">
-          {`Category ${categoryToBeDeleted.category} has ${categoryToBeDeleted.assigned_articles.length} articles. Before this category can be deleted, these
+          {`Category ${categoryToBeDeleted.category} has ${categoryToBeDeleted.articles.length} articles. Before this category can be deleted, these
           articles needs to be moved to another category`}
         </Callout>
         <Select
