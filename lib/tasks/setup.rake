@@ -8,6 +8,7 @@ end
 task populate_with_sample_data: [:environment] do
   if Rails.env.production?
     puts "Skipping deleting and populating sample data in production"
+    create_sample_data!
   else
     create_sample_data!
     puts "Sample data has been added."
@@ -23,7 +24,6 @@ def create_sample_data!
   create_sample_redirection_data!
 end
 
-create_sample_data!
 
 def create_sample_organisation_data!
   puts "Seeding with sample user..."
