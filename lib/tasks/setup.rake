@@ -23,6 +23,8 @@ def create_sample_data!
   create_sample_redirection_data!
 end
 
+create_sample_data!
+
 def create_sample_organisation_data!
   puts "Seeding with sample user..."
   Organisation.create!(
