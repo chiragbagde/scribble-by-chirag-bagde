@@ -9,13 +9,14 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
-import { setAuthHeaders } from "apis/axios";
+import { setAuthHeaders, registerIntercepts } from "apis/axios";
 import RedirectionsApi from "apis/redirections";
 import { initializeLogger } from "common/logger";
 
 import NavBar from "./components/Common/Navbar";
 import Dashboard from "./components/Dashboard";
 import { Create, Edit } from "./components/Dashboard/Articles/Article";
+import NoArticlePresent from "./components/Dashboard/Articles/NoArticlePresent";
 import Eui from "./components/Dashboard/Eui";
 import Settings from "./components/Dashboard/Settings";
 
@@ -40,6 +41,7 @@ const App = () => {
 
   useEffect(() => {
     initializeLogger();
+    registerIntercepts();
     setAuthHeaders(setLoading);
     fetchRedirections();
   }, []);
@@ -72,6 +74,7 @@ const App = () => {
         <Route exact component={Create} path="/articles/create" />
         <Route exact component={Edit} path="/articles/:id/edit" />
         <Route exact component={Eui} path="/public/*" />
+        <Route exact component={NoArticlePresent} path="/articles/notpresent" />
         <Route exact component={Dashboard} history={history} path="/" />
         <Redirect from="/public" to="/public/" />
       </Switch>

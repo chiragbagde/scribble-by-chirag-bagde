@@ -21,6 +21,7 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
   const [loading, setLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [active, setActive] = useState("");
+  const [count, setCount] = useState({});
 
   const handleUpdateStatus = async menu => {
     setActive(menu);
@@ -42,9 +43,16 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
 
   const handleUpdateCategories = async (category, id) => {
     setActive(category);
+    let newSelectedCategories = [];
     try {
-      const newSelectedCategories = [...new Set([...selectedCategories, id])];
-      setSelectedCategories(Array.from(newSelectedCategories));
+      if (selectedCategories.includes(id)) {
+        newSelectedCategories = selectedCategories.filter(
+          selectedCategoryId => id !== selectedCategoryId
+        );
+      } else {
+        newSelectedCategories = [...selectedCategories, id];
+      }
+      setSelectedCategories(newSelectedCategories);
       const {
         data: { articles },
       } = await articlesApi.list({
@@ -57,6 +65,17 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
     }
   };
 
+  const fetchCount = async () => {
+    try {
+      const {
+        data: { count },
+      } = await articlesApi.count();
+      setCount(count);
+    } catch (error) {
+      logger.error(error);
+    }
+  };
+
   const fetchCategories = async () => {
     try {
       const {
@@ -64,19 +83,18 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
       } = await categoriesApi.list();
       setCategories(categories);
       setFilteredItems(categories);
-      setLoading(false);
     } catch (error) {
       logger.error(error);
       setLoading(false);
     }
   };
 
-  const handleSearchTerm = async () => {
+  const handleSearchTerm = async search => {
     try {
       {
         const {
           data: { categories },
-        } = await categoriesApi.list({ category: searchTerm });
+        } = await categoriesApi.list({ category: search });
         setFilteredItems(categories);
       }
     } catch (error) {
@@ -85,8 +103,13 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
     }
   };
 
+  const fetchCategoriesAndCount = async () => {
+    await Promise.all([fetchCount(), fetchCategories()]);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    fetchCategories();
+    fetchCategoriesAndCount();
   }, []);
 
   if (loading) {
@@ -102,6 +125,7 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
       {MENU_ITEMS.map((menu, idx) => (
         <MenuBar.Block
           className={`${active === menu && "bg-white"}`}
+          count={count["count_by_status"][menu]}
           key={idx}
           label={menu}
           onClick={() => handleUpdateStatus(menu)}
@@ -133,9 +157,11 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
         collapse={isSearchCollapsed}
         placeholder="Search and press Enter"
         value={searchTerm}
-        onChange={e => setSearchTerm(e.target.value)}
         onCollapse={() => setIsSearchCollapsed(true)}
-        onKeyDown={handleSearchTerm}
+        onChange={e => {
+          setSearchTerm(e.target.value);
+          handleSearchTerm(e.target.value);
+        }}
       />
       {setCreateCategory && (
         <CreateCategories
@@ -147,13 +173,13 @@ const SideBar = ({ setFilteredArticles, fetchArticles }) => {
       )}
       {(isSearchCollapsed ? categories : filteredItems).map((category, idx) => (
         <MenuBar.Block
+          count={count["count_by_category"][category.id]}
           key={idx}
           label={category.category}
           className={`${
             selectedCategories.includes(category.id) && "bg-white"
           }`}
           onClick={() => handleUpdateCategories(category.category, category.id)}
-          // DblClick={}
         />
       ))}
     </MenuBar>

@@ -24,6 +24,18 @@ class Api::Public::ArticlesController < ApplicationController
     respond_with_success(t("successfully_deleted", entity: "Article"))
   end
 
+  def count
+    count_by_status = Article.group(:status).distinct.count
+    count_by_category = Article.group(:category_id).distinct.count
+    respond_with_json(
+      {
+        count: {
+          count_by_status: { **count_by_status, "All": (Article.count) },
+          count_by_category: count_by_category
+        }
+      })
+  end
+
   private
 
     def load_task!

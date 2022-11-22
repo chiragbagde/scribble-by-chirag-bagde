@@ -28,14 +28,12 @@ const Header = ({
     setChecked(newChecked);
   };
 
-  const handleSearchTerm = async (e, searchTerm) => {
+  const handleSearchTerm = async searchTerm => {
     try {
-      if (e.key === "Enter") {
-        const {
-          data: { articles },
-        } = await articlesApi.list({ title: searchTerm });
-        setFilteredArticles(articles);
-      }
+      const {
+        data: { articles },
+      } = await articlesApi.list({ title: searchTerm });
+      setFilteredArticles(articles);
     } catch (error) {
       logger.error(error);
     }
@@ -88,9 +86,10 @@ const Header = ({
       }
       searchProps={{
         value: searchTerm,
-        onChange: e => setSearchTerm(e.target.value),
-        onKeyDown: e => handleSearchTerm(e, searchTerm),
-        placeholder: "Search for Title and press Enter",
+        onChange: e => {
+          setSearchTerm(e.target.value);
+          handleSearchTerm(e.target.value);
+        },
       }}
     />
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { Formik, Form as FormikForm } from "formik";
-import { Button, Dropdown, Toastr } from "neetoui";
+import { Button, Dropdown } from "neetoui";
 import { Input, Textarea, Select } from "neetoui/formik";
 
 import articlesApi from "apis/articles";
@@ -15,19 +15,14 @@ const { Menu, MenuItem } = Dropdown;
 const Form = ({ history, isEdit, article }) => {
   const [submitted, setSubmitted] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
-  const [changeCategory, setChangeCategory] = useState({
-    value: "",
-    label: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [categoryId, setCategoryId] = useState(null);
+  const [changeCategory, setChangeCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [label, setLabel] = useState("Draft");
 
   const refetch = async () => await articlesApi.list();
 
   const handleInitialEdit = categories => {
     if (isEdit) {
-      setLabel(article.status);
       const matchingCategory = categories.map(
         ({ id }) => id === article.category_id
       );
@@ -36,7 +31,7 @@ const Form = ({ history, isEdit, article }) => {
         value: categories[matchingId].id,
         label: categories[matchingId].category,
       });
-      setCategoryId(matchingId);
+      setLabel(article.status);
     }
   };
 
@@ -68,17 +63,15 @@ const Form = ({ history, isEdit, article }) => {
         await articlesApi.update(
           {
             ...values,
-            category_id: changeCategory.value,
+            category_id: values.category.value,
           },
           values.id
         );
-        Toastr.success("Article updated successfully.");
       } else {
         await articlesApi.create({
           ...values,
-          category_id: changeCategory.value,
+          category_id: values.category.value,
         });
-        Toastr.success("Article created successfully.");
       }
       await refetch();
       history.push("/");
@@ -87,7 +80,7 @@ const Form = ({ history, isEdit, article }) => {
     }
   };
 
-  if (loading) {
+  if (categoryList.length === 0 || loading) {
     return (
       <div className="h-screen w-screen">
         <PageLoader />
@@ -97,13 +90,16 @@ const Form = ({ history, isEdit, article }) => {
 
   return (
     <Formik
-      initialValues={article}
       validateOnBlur={submitted}
       validateOnChange={submitted}
       validationSchema={ARTICLES_FORM_VALIDATION_SCHEMA(categoryList)}
+      initialValues={{
+        ...article,
+        category: changeCategory,
+      }}
       onSubmit={handleSubmit}
     >
-      {({ isSubmitting, setFieldValue }) => (
+      {({ isSubmitting, setFieldValue, dirty }) => (
         <FormikForm className="mx-auto mt-12 max-w-lg space-y-6">
           <div className="flex w-full flex-row space-x-3">
             <Input
@@ -119,16 +115,6 @@ const Form = ({ history, isEdit, article }) => {
               name="category"
               options={categoryList}
               placeholder="Select Category."
-              value={
-                (changeCategory.value && changeCategory) ||
-                categoryList[categoryId]
-              }
-              onChange={e =>
-                setChangeCategory({
-                  value: e.value,
-                  label: e.label,
-                })
-              }
             />
           </div>
           <Textarea
@@ -142,6 +128,7 @@ const Form = ({ history, isEdit, article }) => {
             <div className="flex">
               <Button
                 className="mr-px"
+                disabled={!dirty}
                 label={label === "Draft" ? "Save Draft" : "Published"}
                 name="status"
                 size="medium"
