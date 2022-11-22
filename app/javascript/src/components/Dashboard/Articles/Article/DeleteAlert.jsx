@@ -1,12 +1,11 @@
 import React from "react";
 
-import { Alert, Toastr } from "neetoui";
+import { Alert } from "neetoui";
 
 const DeleteAlert = ({ onClose, id, destroyArticle, title }) => {
   const handleDelete = () => {
     destroyArticle(id);
     onClose();
-    Toastr.success("Article is deleted successfully.");
   };
 
   return (
