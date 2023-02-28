@@ -13,41 +13,42 @@ import categoriesApi from "apis/categories";
 import PageLoader from "components/PageLoader";
 
 import Detail from "./Detail";
+import NoArticle from "./NoArticle";
 
 const SideMenu = ({ history }) => {
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState([]);
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
   const [active, setActive] = useState(null);
-  const [description, setDescription] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
+  const [activeArticle, setActiveArticle] = useState([]);
 
-  const handleClick = ({ slug, title, description, created_at }, category) => {
-    setTitle(title);
-    setDescription(description);
-    setCreatedAt(created_at);
-    setActive(slug);
-    setCategory(category);
-    setSlug(slug);
-    history.push(`/public/${category}/${slug}`);
+  const handleClick = (article, category) => {
+    setActive(article.slug);
+    setActiveArticle(activeArticle);
+    history.push(`/public/${category}/${article.slug}`);
   };
 
   const params = useParams();
   const [paramsCategory, paramsSlug] = params[0].split("/");
 
-  const findFirstNonNullArgument = (...args) =>
-    args
-      .filter(({ articles }) => articles.length > 0)
-      .filter(({ slug }) => slug !== null)[0];
+  const findFirstNonNullArgument = (...args) => {
+    args = args.filter(({ articles }) => articles.length > 0);
+
+    args = args.map(({ articles, category }) => {
+      articles = articles.filter(({ slug }) => slug !== null);
+
+      return [articles, category];
+    });
+
+    return args.filter(arg => arg[0].length > 0)[0];
+  };
 
   const firstArticleDetails = categories => {
     if (params[0] === "") {
       const category = findFirstNonNullArgument(...categories);
-      history.push(
-        `/public/${category.category}/${category["articles"][0]["slug"]}`
-      );
+      if (category) {
+        history.push(`/public/${category[1]}/${category[0][0]["slug"]}`);
+      }
     }
   };
 
@@ -56,7 +57,11 @@ const SideMenu = ({ history }) => {
       const {
         data: { categories },
       } = await categoriesApi.list();
-      setCategories(categories);
+
+      const updatedCategories = categories.filter(
+        ({ articles }) => articles.length >= 1
+      );
+      setCategories(updatedCategories);
       setLoading(false);
       firstArticleDetails(categories);
     } catch (error) {
@@ -75,15 +80,14 @@ const SideMenu = ({ history }) => {
       const categoryData = categories.filter(
         ({ category }) => category === paramsCategory
       );
-      const paramsArticle = categoryData[0].articles.filter(
-        ({ slug }) => slug === paramsSlug
-      )[0];
-      setTitle(paramsArticle.title);
-      setSlug(paramsArticle.slug);
-      setDescription(paramsArticle.description);
-      setCreatedAt(paramsArticle.created_at);
-      setCategory(categoryData[0]["category"]);
-      setActive(paramsArticle.slug);
+      if (categoryData.length) {
+        const paramsArticle = categoryData[0].articles.filter(
+          ({ slug }) => slug === paramsSlug
+        )[0];
+        setActiveArticle(paramsArticle);
+        setCategory(categoryData[0]["category"]);
+        setActive(paramsArticle.slug);
+      }
     }
   }, [categories, paramsCategory, paramsSlug, loading]);
 
@@ -95,7 +99,7 @@ const SideMenu = ({ history }) => {
     );
   }
 
-  return (
+  return paramsSlug ? (
     <ProSidebarProvider>
       <div className="flex h-screen w-full">
         <Sidebar>
@@ -107,23 +111,22 @@ const SideMenu = ({ history }) => {
                 label={category["category"]}
               >
                 {category["articles"].map(
-                  ({ slug, title, description, created_at }, idx) =>
-                    slug && (
+                  (article, idx) =>
+                    article.slug && (
                       <MenuItem
-                        className={`${active === slug && "text-indigo-600"}`}
                         key={idx}
                         active={
                           category["category"] === paramsCategory &&
-                          title === paramsSlug
+                          article.title === paramsSlug
                         }
+                        className={`${
+                          active === article.slug && "text-indigo-600"
+                        }`}
                         onClick={() =>
-                          handleClick(
-                            { slug, title, description, created_at },
-                            category["category"]
-                          )
+                          handleClick(article, category["category"])
                         }
                       >
-                        {title}
+                        {article.title}
                       </MenuItem>
                     )
                 )}
@@ -134,21 +137,20 @@ const SideMenu = ({ history }) => {
         <Switch>
           <Route
             exact
-            path={`/public/${category}/${slug}`}
-            render={props => (
+            path={`/public/${category}/${activeArticle.slug}`}
+            render={() => (
               <Detail
-                {...props}
+                activeArticle={activeArticle}
                 category={category}
-                created_at={createdAt}
-                description={description}
                 history={history}
-                title={title}
               />
             )}
           />
         </Switch>
       </div>
     </ProSidebarProvider>
+  ) : (
+    <NoArticle history={history} />
   );
 };
 

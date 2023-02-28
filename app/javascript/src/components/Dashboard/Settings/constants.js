@@ -1,3 +1,5 @@
+import * as yup from "yup";
+
 export const MENU_ITEMS = [
   {
     label: "General",
@@ -21,5 +23,15 @@ export const MENU_ITEMS = [
     id: 3,
   },
 ];
+
+export const CATEGORY_VALIDATION_SCHEMA = yup.object().shape({
+  category: yup
+    .string()
+    .required("Category is required")
+    .matches(
+      /^[a-zA-Z_&_ ]*$/,
+      "Category must not contain special characters or digits."
+    ),
+});
 
 export const REGEXP = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/;

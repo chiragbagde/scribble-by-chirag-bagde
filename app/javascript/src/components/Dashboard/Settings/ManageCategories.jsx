@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Formik, Form } from "formik";
 import { Delete, Edit, Reorder, Plus } from "neetoicons";
-import { Typography, Toastr } from "neetoui";
+import { Typography } from "neetoui";
 import { Input } from "neetoui/formik";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
@@ -40,7 +40,6 @@ const ManageCategories = () => {
     try {
       setCategoryUpdated(true);
       await categoriesApi.update({ ...values }, showId);
-      Toastr.success("Category updated successfully.");
     } catch (error) {
       logger.error(error);
       setLoading(false);

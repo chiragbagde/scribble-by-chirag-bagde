@@ -4,7 +4,9 @@ Rails.application.routes.draw do
   defaults format: :json do
     namespace :api do
       namespace :public do
-        resources :articles, except: %i[new edit show]
+        resources :articles, except: %i[new edit show] do
+          get "count", on: :collection
+        end
         resources :categories, except: %i[destroy]
       end
       namespace :admin do
