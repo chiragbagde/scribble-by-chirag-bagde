@@ -1,8 +1,28 @@
-# README
+# Scribble
 
-## Steps for setting up the project -
+A full-stack blogging platform built during my internship at BigBinary. Supports article creation, categories, versioning, and role-based publishing workflows.
 
-1. git clone to local repository.
-2. Type bundle install from the parent directory to start the project.
-3. Run rails s to start the server.
-4. run ./bin/webpack-dev-server to initialize webpack.
+Reached 97% test coverage through unit and integration tests.
+
+**Stack**
+
+Ruby on Rails · React · Tailwind CSS · PostgreSQL · Webpack
+
+**Setup**
+
+```bash
+git clone https://github.com/chiragbagde/scribble-by-chirag-bagde.git
+cd scribble-by-chirag-bagde
+bundle install
+rails db:create db:migrate
+./bin/webpack-dev-server &
+rails s
+```
+
+**Features**
+
+- Create, edit, and publish articles with rich text
+- Organize content by categories
+- Draft and publish workflow with version history
+- Role-based access for authors and admins
+- 97% test coverage
