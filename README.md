@@ -23,6 +23,7 @@ rails s
 
 - Create, edit, and publish articles with rich text
 - Organize content by categories
+- Filter articles by status, category, and title, and sort by title/status/date (`?sort_by=&sort_order=`)
 - Draft and publish workflow with version history
 - Role-based access for authors and admins
 - 97% test coverage
