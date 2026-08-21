@@ -15,6 +15,8 @@ const update = (payload, id) => {
   });
 };
 
+const count = () => axios.get("/api/public/articles/count");
+
 const destroy = id => axios.delete(`/api/public/articles/${id}`);
 
 const articlesApi = {
@@ -23,6 +25,7 @@ const articlesApi = {
   update,
   show,
   destroy,
+  count,
 };
 
 export default articlesApi;

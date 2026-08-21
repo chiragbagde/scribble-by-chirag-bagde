@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { Warning } from "neetoicons";
-import { Modal, Button, Select, Typography, Callout, Toastr } from "neetoui";
+import { Modal, Button, Select, Typography, Callout } from "neetoui";
 
 import categoriesApi from "apis/categories";
 
@@ -21,7 +21,6 @@ const DeleteAlert = ({
       await categoriesApi.destroy(categoryToBeDeleted.id, {
         category: moveToCategory.value,
       });
-      Toastr.success("Category deleted successfully.");
     } catch (error) {
       logger.error(error);
     }

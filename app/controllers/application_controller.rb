@@ -11,7 +11,6 @@ class ApplicationController < ActionController::Base
     end
 
     def current_user
-      current_organisation
-      @_current_user ||= @current_organisation.users.first
+      @_current_user ||= current_organisation.users.first
     end
 end

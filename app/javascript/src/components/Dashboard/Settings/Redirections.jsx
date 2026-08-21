@@ -35,7 +35,6 @@ const Redirections = () => {
     try {
       setUpdateRedirections(true);
       await RedirectionsApi.destroy(id);
-      Toastr.success("Redirection deleted successfully.");
       setLoading(false);
     } catch (error) {
       logger.error(error);
@@ -47,7 +46,6 @@ const Redirections = () => {
     try {
       setUpdateRedirections(true);
       await RedirectionsApi.create({ to: toPath, from: fromPath });
-      Toastr.success("Redirection created successfully.");
       setLoading(false);
       setCreateRedirection(false);
     } catch (error) {
@@ -69,7 +67,6 @@ const Redirections = () => {
     try {
       setUpdateRedirections(true);
       await RedirectionsApi.update({ to: toPath, from: fromPath }, showId);
-      Toastr.success("Redirection updated successfully.");
     } catch (error) {
       logger.error(error);
       setLoading(false);

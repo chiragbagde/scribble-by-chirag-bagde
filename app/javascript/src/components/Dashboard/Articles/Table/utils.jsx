@@ -15,7 +15,9 @@ export const articlesTableColumnData = (history, handleDelete, columns) =>
       render: (title, { category, slug }) => (
         <span
           onClick={() =>
-            slug && history.push(`/public/${category.category}/${slug}`)
+            slug
+              ? history.push(`/public/${category.category}/${slug}`)
+              : alert("You can only see published articles!")
           }
         >
           {title}
